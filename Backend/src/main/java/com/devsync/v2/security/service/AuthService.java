@@ -53,7 +53,8 @@ public class AuthService {
 
         // Saving the user
         try {
-            UserDTO savedUser = userService.save(user).getBody();
+            userService.save(user);
+            UserEntity savedUser = userService.findByEmail(request.getEmail()).getBody();
             if (savedUser == null) {
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(AuthenticationResponse
                         .builder().error("User registration failed").build());

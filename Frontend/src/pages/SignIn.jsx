@@ -12,6 +12,7 @@ import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import axios from "axios";
+import { useCookies } from "react-cookie";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -26,6 +27,7 @@ const defaultTheme = createTheme({
 
 export default function SignIn() {
   const BASE_URL = "http://localhost:8080";
+  const [cookie, setCookie] = useCookies(["token"]);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -40,7 +42,6 @@ export default function SignIn() {
       })
       .catch((error) => {
         if (error.response && error.response.status === 403) {
-          console.log("Invalid credentials");
           toast.error("Invalid credentials");
         } else {
           console.log(error);

@@ -6,6 +6,7 @@ import Link from "@mui/material/Link";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
+import { useCookies } from "react-cookie";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { toast, ToastContainer } from "react-toastify";
@@ -23,6 +24,7 @@ const defaultTheme = createTheme({
 
 export default function SignUp() {
   const BASE_URL = "http://localhost:8080";
+  const [cookie, setCookie, removeCookie] = useCookies(["token"]);
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -30,18 +32,23 @@ export default function SignUp() {
     const user = {
       firstName: data.get("firstName"),
       lastName: data.get("lastName"),
+      username: data.get("username"),
       email: data.get("email"),
       password: data.get("password"),
     };
     axios
       .post(BASE_URL + "/api/auth/register", user)
       .then((response) => {
-        console.log(response);
         toast.success("User registered successfully");
+        setCookie("token", response.data.jwt, { path: "/" });
       })
       .catch((error) => {
-        console.log(error);
-        toast.error("An error occurred");
+        if (error.response && error.response.status === 400) {
+          toast.error(error.response.data.error);
+        } else {
+          console.log(error);
+          toast.error("An error occurred");
+        }
       });
   };
 
@@ -90,6 +97,16 @@ export default function SignUp() {
                         label="Last Name"
                         name="lastName"
                         autoComplete="family-name"
+                      />
+                    </Grid>
+                    <Grid item xs={12}>
+                      <TextField
+                        required
+                        fullWidth
+                        id="username"
+                        label="Username"
+                        name="username"
+                        autoComplete="off"
                       />
                     </Grid>
                     <Grid item xs={12}>

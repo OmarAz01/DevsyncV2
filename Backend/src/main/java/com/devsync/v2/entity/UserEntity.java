@@ -26,8 +26,6 @@ public class UserEntity implements UserDetails {
     private String imageUri;
     @Column(columnDefinition = "TEXT")
     private String bio;
-    private String skill;
-    private String level;
     @Enumerated(EnumType.STRING)
     private Role role;
     @OneToOne(mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true)
