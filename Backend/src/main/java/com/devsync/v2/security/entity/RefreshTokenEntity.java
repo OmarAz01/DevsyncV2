@@ -1,6 +1,7 @@
 package com.devsync.v2.security.entity;
 
 import com.devsync.v2.entity.UserEntity;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.OnDelete;
@@ -14,7 +15,7 @@ public class RefreshTokenEntity {
     @Id
     private Long userId;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @MapsId
     @JoinColumn(name = "userId")

@@ -74,7 +74,9 @@ public class AuthService {
 
 
     public ResponseEntity<AuthenticationResponse> authenticate(AuthenticationRequest request) {
+        System.out.println("Login request: " + request);
         UserEntity user = userService.findByEmail(request.getEmail()).getBody();
+        System.out.println("User: " + user);
         if (user == null) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(AuthenticationResponse
                     .builder().error("User not found").build());

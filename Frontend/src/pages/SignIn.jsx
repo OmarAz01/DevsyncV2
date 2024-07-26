@@ -26,19 +26,21 @@ const defaultTheme = createTheme({
 });
 
 export default function SignIn() {
-  const BASE_URL = "http://localhost:8080";
+  const BASE_URL = import.meta.env.VITE_BASE_URL;
   const [cookie, setCookie] = useCookies(["token"]);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     await axios
-      .post(BASE_URL + "/api/auth/authenticate", {
+      .post(BASE_URL + "/api/auth/login", {
         email: data.get("email"),
         password: data.get("password"),
       })
       .then((response) => {
-        console.log(response);
+        toast.success("User logged in successfully");
+        setCookie("token", response.data.jwt, { path: "/" });
+        window.location.href = "/";
       })
       .catch((error) => {
         if (error.response && error.response.status === 403) {
@@ -57,7 +59,7 @@ export default function SignIn() {
           <CssBaseline />
           <Box
             sx={{
-              marginTop: 16,
+              marginTop: 12,
               display: "flex",
               flexDirection: "column",
               alignItems: "center",
@@ -107,7 +109,7 @@ export default function SignIn() {
                     <Link href="/forgotpassword" variant="body2">
                       Forgot password?
                     </Link>
-                    <Link href="/" variant="body2">
+                    <Link href="/signup" variant="body2">
                       {"Don't have an account? Sign Up"}
                     </Link>
                   </div>

@@ -23,12 +23,35 @@ const defaultTheme = createTheme({
 });
 
 export default function SignUp() {
-  const BASE_URL = "http://localhost:8080";
+  const BASE_URL = import.meta.env.VITE_BASE_URL;
   const [cookie, setCookie, removeCookie] = useCookies(["token"]);
+  const passwordRegex =
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,30}$/;
+  const emailRegex =
+    /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
+
+    // Form Validation
+    const passwordRegex =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,30}$/;
+    if (!passwordRegex.test(data.get("password"))) {
+      toast.error(
+        "Password must contain an uppercase letter, a symbol, and a number"
+      );
+      return;
+    }
+    if (data.get("password") !== data.get("confirm-password")) {
+      toast.error("Passwords do not match");
+      return;
+    }
+    if (!emailRegex.test(data.get("email"))) {
+      toast.error("Invalid email address");
+      return;
+    }
+
     const user = {
       firstName: data.get("firstName"),
       lastName: data.get("lastName"),
@@ -41,6 +64,7 @@ export default function SignUp() {
       .then((response) => {
         toast.success("User registered successfully");
         setCookie("token", response.data.jwt, { path: "/" });
+        window.location.href = "/";
       })
       .catch((error) => {
         if (error.response && error.response.status === 400) {
@@ -59,7 +83,7 @@ export default function SignUp() {
           <CssBaseline />
           <Box
             sx={{
-              marginTop: 16,
+              marginTop: 12,
               display: "flex",
               flexDirection: "column",
               alignItems: "center",
@@ -115,6 +139,7 @@ export default function SignUp() {
                         fullWidth
                         id="email"
                         label="Email Address"
+                        type="email"
                         name="email"
                         autoComplete="email"
                       />
@@ -127,6 +152,17 @@ export default function SignUp() {
                         label="Password"
                         type="password"
                         id="password"
+                        autoComplete="new-password"
+                      />
+                    </Grid>
+                    <Grid item xs={12}>
+                      <TextField
+                        required
+                        fullWidth
+                        name="confirm-password"
+                        label="Retype Password"
+                        type="password"
+                        id="confirm-password"
                         autoComplete="new-password"
                       />
                     </Grid>
