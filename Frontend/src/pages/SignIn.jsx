@@ -40,6 +40,7 @@ export default function SignIn() {
       .then((response) => {
         toast.success("User logged in successfully");
         setCookie("token", response.data.jwt, { path: "/" });
+        setCookie("user", response.data.username, { path: "/" });
         window.location.href = "/";
       })
       .catch((error) => {

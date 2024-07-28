@@ -1,6 +1,7 @@
 package com.devsync.v2.security.service;
 
 import com.devsync.v2.dto.UserDTO;
+import com.devsync.v2.entity.Role;
 import com.devsync.v2.entity.UserEntity;
 import com.devsync.v2.security.entity.AuthenticationRequest;
 import com.devsync.v2.security.entity.AuthenticationResponse;
@@ -47,9 +48,14 @@ public class AuthService {
         // Creating a new user
         UserEntity user = new UserEntity();
         user.setEmail(request.getEmail());
+        user.setFirstName(request.getFirstName());
+        user.setLastName(request.getLastName());
         user.setUsername(request.getUsername());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
-
+        user.setRole(Role.USER);
+        String userInitials = request.getFirstName().substring(0, 1) + request.getLastName().substring(0, 1);
+        String imageUri = "https://api.dicebear.com/9.x/initials/svg?seed=" + userInitials;
+        user.setImageUri(imageUri);
 
         // Saving the user
         try {
@@ -61,11 +67,12 @@ public class AuthService {
             }
             // Create refresh and access tokens
             Long userId = savedUser.getUserId();
+            String username = savedUser.getUsername();
             String jwt = jwtService.generateToken(userId);
             String refreshToken = jwtService.generateRefreshToken(userId);
             refreshTokenService.createRefreshToken(savedUser.getUserId(), refreshToken, jwt);
             return ResponseEntity.status(HttpStatus.OK).body(AuthenticationResponse.builder()
-                    .userId(userId).jwt(jwt).build());
+                    .username(username).jwt(jwt).build());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(AuthenticationResponse
                     .builder().error("User registration failed").build());
@@ -85,6 +92,7 @@ public class AuthService {
                     request.getEmail(), request.getPassword(), Collections.emptyList()));
         }
         Long userId = user.getUserId();
+        String username = user.getUsername();
         // Delete old refresh token
         refreshTokenService.deleteRefreshToken(userId);
         // Create new refresh and access tokens
@@ -94,7 +102,7 @@ public class AuthService {
         SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(
                 request.getEmail(), request.getPassword(), Collections.emptyList()));
         return ResponseEntity.status(HttpStatus.OK).body(AuthenticationResponse.builder()
-                .userId(user.getUserId()).jwt(jwt).build());
+                .username(username).jwt(jwt).build());
     }
 
     public void validateToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -102,6 +110,7 @@ public class AuthService {
         Authentication authContext = SecurityContextHolder.getContext().getAuthentication();
         Object currentPrincipal = authContext.getPrincipal();
         Long userId;
+        String username;
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.getWriter().write("No token found");
@@ -111,6 +120,7 @@ public class AuthService {
         if (currentPrincipal instanceof UserEntity) {
             UserEntity currentUser = (UserEntity) currentPrincipal;
             userId = currentUser.getUserId();
+            username = currentUser.getUsername();
         } else {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.getWriter().write("Not logged in");
@@ -142,12 +152,12 @@ public class AuthService {
             String newJwt = jwtService.generateToken(userId);
             refreshTokenService.updateLastAccessToken(userId, newJwt);
             AuthenticationResponse authenticationResponse = AuthenticationResponse.builder()
-                    .userId(userId).jwt(newJwt).build();
+                    .username(username).jwt(newJwt).build();
             new ObjectMapper().writeValue(response.getOutputStream(), authenticationResponse);
         } else {
             // Return the current token if it is valid and not expired
             AuthenticationResponse authenticationResponse = AuthenticationResponse.builder()
-                    .userId(userId).jwt(jwt).build();
+                    .username(username).jwt(jwt).build();
             new ObjectMapper().writeValue(response.getOutputStream(), authenticationResponse);
         }
     }

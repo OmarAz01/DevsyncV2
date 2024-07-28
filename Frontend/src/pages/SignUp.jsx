@@ -64,7 +64,8 @@ export default function SignUp() {
       .then((response) => {
         toast.success("User registered successfully");
         setCookie("token", response.data.jwt, { path: "/" });
-        window.location.href = "/";
+        setCookie("user", response.data.username, { path: "/" });
+        window.location.href = "/profile/" + data.get("username");
       })
       .catch((error) => {
         if (error.response && error.response.status === 400) {

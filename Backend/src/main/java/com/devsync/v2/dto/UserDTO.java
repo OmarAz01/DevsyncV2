@@ -11,6 +11,8 @@ import lombok.NoArgsConstructor;
 public class UserDTO {
     private Long userId;
     private String email;
+    private String firstName;
+    private String lastName;
     private String username;
     private String imageUri;
     private String role;
@@ -20,6 +22,8 @@ public class UserDTO {
         return new UserDTO(
                 user.getUserId(),
                 user.getEmail(),
+                user.getFirstName(),
+                user.getLastName(),
                 user.getUsername(),
                 user.getImageUri(),
                 user.getRole().toString(),

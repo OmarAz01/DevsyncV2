@@ -23,7 +23,8 @@ const App = () => {
         })
         .then((response) => {
           if (response.status === 200) {
-            setCookie("token", token, { path: "/" });
+            setCookie("token", response.data.jwt, { path: "/" });
+            setCookie("user", response.data.username, { path: "/" });
             setLoggedIn(true);
             console.log("User is logged in");
           }
@@ -45,6 +46,7 @@ const App = () => {
 
   const signOut = () => {
     removeCookie("token");
+    removeCookie("user");
     window.location.href = "/signin";
   };
 
@@ -89,7 +91,7 @@ const App = () => {
           <Route path="/" element={<Feed />} />
           <Route path="/signup" element={<SignUp />} />
           <Route path="/signin" element={<SignIn />} />
-          <Route path="/profile" element={<Profile />} />
+          <Route path="/profile/:username" element={<Profile />} />
         </Routes>
       </main>
       <footer>

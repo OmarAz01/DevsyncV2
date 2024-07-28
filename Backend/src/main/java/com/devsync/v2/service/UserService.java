@@ -9,8 +9,6 @@ public interface UserService {
 
     ResponseEntity<Long> deleteUser(Long id);
 
-    ResponseEntity<UserDTO> updateUserImage(Long id, String image);
-
     ResponseEntity<UserDTO> findByUsername(String username);
 
     ResponseEntity<UserEntity> findByEmail(String email);
