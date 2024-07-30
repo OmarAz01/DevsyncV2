@@ -24,7 +24,7 @@ const App = () => {
         .then((response) => {
           if (response.status === 200) {
             setCookie("token", response.data.jwt, { path: "/" });
-            setCookie("user", response.data.username, { path: "/" });
+            setCookie("user", response.data.id, { path: "/" });
             setLoggedIn(true);
             console.log("User is logged in");
           }
@@ -47,6 +47,7 @@ const App = () => {
   const signOut = () => {
     removeCookie("token");
     removeCookie("user");
+    removeCookie("username");
     window.location.href = "/signin";
   };
 
@@ -61,7 +62,7 @@ const App = () => {
         </Link>
         {loggedIn ? (
           <>
-            <Link to="/profile">
+            <Link to={`/profile/${cookie.username}`}>
               <h4 className="p-4 text-primary hover:cursor-pointer hover:font-bold font-Roboto text-xl sm:text-2xl">
                 {" "}
                 Profile

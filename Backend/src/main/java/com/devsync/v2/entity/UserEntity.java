@@ -28,11 +28,12 @@ public class UserEntity implements UserDetails {
     private String firstName;
     private String lastName;
     private String password;
-    private String imageUri;
-    @Column(columnDefinition = "TEXT")
-    private String bio;
     @Enumerated(EnumType.STRING)
     private Role role;
+    @OneToOne(mappedBy = "user", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY, orphanRemoval = true)
+    @ToString.Exclude
+    private ProfileDetails profileDetails;
+
     @OneToOne(mappedBy = "user", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY, orphanRemoval = true)
     @ToString.Exclude
     private RefreshTokenEntity refreshToken;

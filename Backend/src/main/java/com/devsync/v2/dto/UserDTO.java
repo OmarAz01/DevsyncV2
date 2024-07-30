@@ -14,9 +14,7 @@ public class UserDTO {
     private String firstName;
     private String lastName;
     private String username;
-    private String imageUri;
     private String role;
-    private String bio;
 
     public static UserDTO convertToDTO(UserEntity user) {
         return new UserDTO(
@@ -25,9 +23,7 @@ public class UserDTO {
                 user.getFirstName(),
                 user.getLastName(),
                 user.getUsername(),
-                user.getImageUri(),
-                user.getRole().toString(),
-                user.getBio()
+                user.getRole().toString()
         );
     }
 }

@@ -1,5 +1,6 @@
 package com.devsync.v2.security.service;
 
+import com.devsync.v2.entity.UserEntity;
 import com.devsync.v2.security.entity.RefreshTokenEntity;
 import com.devsync.v2.security.repo.RefreshTokenRepo;
 import io.jsonwebtoken.Claims;
@@ -79,12 +80,27 @@ public class JwtService {
     }
 
     public boolean isTokenValid(String jwt) {
-        Long userId = Long.parseLong(getUserId(jwt));
-        Optional<RefreshTokenEntity> refreshTokenEntity = refreshTokenRepo.findByLastAccessToken(jwt);
-        if (refreshTokenEntity.isPresent() && refreshTokenEntity.get().getUser().getUserId().equals(userId)) {
+        try {
+            extractAllClaims(jwt);
             return true;
+        } catch (Exception e) {
+            return false;
         }
-        return false;
+    }
+
+    public boolean isTokenValid(String jwt, UserEntity user) {
+        try {
+            Long userId = Long.parseLong(getUserId(jwt));
+            if (user.getUserId().equals(userId)) {
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+        catch (Exception e) {
+            return false;
+        }
     }
 
     public boolean isTokenExpired(String jwt) {

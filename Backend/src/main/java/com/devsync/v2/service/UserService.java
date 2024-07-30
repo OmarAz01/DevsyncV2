@@ -15,6 +15,4 @@ public interface UserService {
 
     ResponseEntity<UserDTO> save(UserEntity user);
 
-    ResponseEntity<UserDTO> updateUserBio(Long id, String bio);
-
 }

@@ -71,14 +71,7 @@ public class UserServiceImpl implements UserService {
             UserDTO userDTO = UserDTO.convertToDTO(newUser);
             return ResponseEntity.status(HttpStatus.CREATED).body(userDTO);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
-
-    @Override
-    public ResponseEntity<UserDTO> updateUserBio(Long id, String bio) {
-        return null;
-    }
-
-
 }

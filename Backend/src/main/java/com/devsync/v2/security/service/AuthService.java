@@ -1,12 +1,15 @@
 package com.devsync.v2.security.service;
 
 import com.devsync.v2.dto.UserDTO;
+import com.devsync.v2.entity.ProfileDetails;
 import com.devsync.v2.entity.Role;
 import com.devsync.v2.entity.UserEntity;
 import com.devsync.v2.security.entity.AuthenticationRequest;
 import com.devsync.v2.security.entity.AuthenticationResponse;
 import com.devsync.v2.security.entity.RefreshTokenEntity;
 import com.devsync.v2.security.entity.RegisterRequest;
+import com.devsync.v2.security.repo.RefreshTokenRepo;
+import com.devsync.v2.service.ProfileDetailsService;
 import com.devsync.v2.service.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
@@ -23,6 +26,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -32,6 +36,8 @@ public class AuthService {
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
     private final RefreshTokenService refreshTokenService;
+    private final ProfileDetailsService profileDetailsService;
+    private final RefreshTokenRepo refreshTokenRepo;
 
 
     public ResponseEntity<AuthenticationResponse> register(RegisterRequest request) {
@@ -53,26 +59,29 @@ public class AuthService {
         user.setUsername(request.getUsername());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
         user.setRole(Role.USER);
-        String userInitials = request.getFirstName().substring(0, 1) + request.getLastName().substring(0, 1);
-        String imageUri = "https://api.dicebear.com/9.x/initials/svg?seed=" + userInitials;
-        user.setImageUri(imageUri);
+        String imageUri = "https://api.dicebear.com/9.x/avataaars-neutral/svg?seed=" + request.getUsername() + "&backgroundColor=f8d25c";
+        ProfileDetails profileDetails = new ProfileDetails();
+        profileDetails.setImageUri(imageUri);
+        profileDetails.setUser(user);
+
 
         // Saving the user
         try {
             userService.save(user);
+            profileDetailsService.save(profileDetails);
+            // Create refresh and access tokens
             UserEntity savedUser = userService.findByEmail(request.getEmail()).getBody();
             if (savedUser == null) {
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(AuthenticationResponse
-                        .builder().error("User registration failed").build());
+                        .builder().error("Something Went Wrong").build());
             }
-            // Create refresh and access tokens
             Long userId = savedUser.getUserId();
             String username = savedUser.getUsername();
             String jwt = jwtService.generateToken(userId);
             String refreshToken = jwtService.generateRefreshToken(userId);
             refreshTokenService.createRefreshToken(savedUser.getUserId(), refreshToken, jwt);
             return ResponseEntity.status(HttpStatus.OK).body(AuthenticationResponse.builder()
-                    .username(username).jwt(jwt).build());
+                    .id(userId).username(username).jwt(jwt).build());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(AuthenticationResponse
                     .builder().error("User registration failed").build());
@@ -102,32 +111,21 @@ public class AuthService {
         SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(
                 request.getEmail(), request.getPassword(), Collections.emptyList()));
         return ResponseEntity.status(HttpStatus.OK).body(AuthenticationResponse.builder()
-                .username(username).jwt(jwt).build());
+                .id(userId).username(username).jwt(jwt).build());
     }
 
     public void validateToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String authHeader = request.getHeader("Authorization");
-        Authentication authContext = SecurityContextHolder.getContext().getAuthentication();
-        Object currentPrincipal = authContext.getPrincipal();
-        Long userId;
-        String username;
+        System.out.println("Validating token");
+
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.getWriter().write("No token found");
             return;
         }
 
-        if (currentPrincipal instanceof UserEntity) {
-            UserEntity currentUser = (UserEntity) currentPrincipal;
-            userId = currentUser.getUserId();
-            username = currentUser.getUsername();
-        } else {
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.getWriter().write("Not logged in");
-            return;
-        }
-
         String jwt = authHeader.substring(7);
+        Long userId = Long.valueOf(jwtService.getUserId(jwt));
 
         if (!jwtService.isTokenValid(jwt)) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
@@ -136,6 +134,8 @@ public class AuthService {
         }
 
         if (jwtService.isTokenExpired(jwt)) {
+            System.out.println("Token expired");
+            // If the token is expired, check if there is a refresh token
             RefreshTokenEntity refreshTokenEntity = refreshTokenService.findByLastAccessToken(jwt).getBody();
             if (refreshTokenEntity == null) {
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
@@ -147,17 +147,17 @@ public class AuthService {
                 response.getWriter().write("Refresh token expired");
                 return;
             }
-
             // If the refresh token is valid and not expired, create a new access token and update database with it
             String newJwt = jwtService.generateToken(userId);
-            refreshTokenService.updateLastAccessToken(userId, newJwt);
+            refreshTokenEntity.setLastAccessToken(newJwt);
+            refreshTokenRepo.save(refreshTokenEntity);
             AuthenticationResponse authenticationResponse = AuthenticationResponse.builder()
-                    .username(username).jwt(newJwt).build();
+                    .id(userId).jwt(newJwt).build();
             new ObjectMapper().writeValue(response.getOutputStream(), authenticationResponse);
         } else {
             // Return the current token if it is valid and not expired
             AuthenticationResponse authenticationResponse = AuthenticationResponse.builder()
-                    .username(username).jwt(jwt).build();
+                    .id(userId).jwt(jwt).build();
             new ObjectMapper().writeValue(response.getOutputStream(), authenticationResponse);
         }
     }
