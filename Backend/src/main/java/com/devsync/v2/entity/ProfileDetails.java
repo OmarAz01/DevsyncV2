@@ -19,5 +19,6 @@ public class ProfileDetails {
     @Column(columnDefinition = "TEXT")
     private String bio;
     private String imageUri;
+    private String userLink;
     private String skills;
 }

@@ -24,18 +24,18 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final UserDetailsService userDetailsService;
     private final JwtService jwtService;
-    private final List<String> openEndpoints = List.of("/api/auth/register", "/api/auth/login", "/api/auth/validate", "/api/user/{username}");
+    private final List<String> openEndpoints = List.of("/api/auth/register", "/api/auth/login", "/api/auth/validate", "/api/user/profile/{username}");
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
+        System.out.println("Filtering request: " + request.getServletPath());
         if (isRequestToOpenEndpoint(request)) {
             filterChain.doFilter(request, response);
             return;
         }
 
         String authHeader = request.getHeader("Authorization");
-        System.out.println("Filter");
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             SecurityContextHolder.clearContext();
             filterChain.doFilter(request, response);

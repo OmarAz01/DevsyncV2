@@ -22,7 +22,7 @@ const Profile = () => {
     const username = location.pathname.split("/")[2];
     if (username) {
       axios
-        .get(`${BASE_URL}/api/user/${username}`)
+        .get(`${BASE_URL}/api/user/profile/${username}`)
         .then((response) => {
           console.log(response.data);
           setUserDetails(response.data);
@@ -34,12 +34,12 @@ const Profile = () => {
   }, []);
   return (
     <div className="flex justify-center items-center sm:mt-12">
-      <div className="flex lg:flex-row flex-col p-4 w-full justify-center items-center lf:items-start max-w-screen-2xl">
+      <div className="flex lg:flex-row flex-col p-4 w-full max-w-screen-2xl items-center">
         <div className="flex flex-col lg:left-0 w-fit h-fit pb-4 pt-12 lg:px-6 items-center max-w-md">
           <BioSection userDetails={userDetails} createAlert={createAlert} />
         </div>
-        <div className="sm:w-3/5 flex flex-col items-center justify-center">
-          <div className="flex flex-col h-fit py-12 items-center w-full">
+        <div className="sm:w-3/5 flex flex-col">
+          <div className="flex flex-col h-fit py-12 sm:mt-12 items-center w-full">
             <SkillSection userDetails={userDetails} createAlert={createAlert} />
           </div>
         </div>

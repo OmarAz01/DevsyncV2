@@ -15,6 +15,7 @@ public class ProfileDetailsDTO {
     private String bio;
     private String imageUri;
     private String skills;
+    private String userLink;
 
     public static ProfileDetailsDTO convertToDTO(ProfileDetails profileDetails) {
         return new ProfileDetailsDTO(
@@ -22,7 +23,8 @@ public class ProfileDetailsDTO {
                 profileDetails.getUser().getEmail(),
                 profileDetails.getBio(),
                 profileDetails.getImageUri(),
-                profileDetails.getSkills()
+                profileDetails.getSkills(),
+                profileDetails.getUserLink()
         );
     }
 }

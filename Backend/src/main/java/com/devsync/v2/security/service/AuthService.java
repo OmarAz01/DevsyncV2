@@ -62,6 +62,8 @@ public class AuthService {
         String imageUri = "https://api.dicebear.com/9.x/avataaars-neutral/svg?seed=" + request.getUsername() + "&backgroundColor=f8d25c";
         ProfileDetails profileDetails = new ProfileDetails();
         profileDetails.setImageUri(imageUri);
+        profileDetails.setSkills("Python, Java, C++");
+        profileDetails.setBio("This is " + request.getUsername() + "'s bio. Nothing to see here.");
         profileDetails.setUser(user);
 
 

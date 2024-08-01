@@ -1,21 +1,25 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import ModeEditIcon from "@mui/icons-material/ModeEdit";
+import { useCookies } from "react-cookie";
+import axios from "axios";
 
 const SkillSection = ({ userDetails, createAlert }) => {
-  const [skills, setSkills] = useState([
-    "JavaScript",
-    "React",
-    "Node.js",
-    "Express",
-    "MongoDB",
-  ]);
-  const [baseskills, setBaseSkills] = useState([
-    "JavaScript",
-    "React",
-    "Node.js",
-    "Express",
-    "MongoDB",
-  ]);
+  const BASE_URL = import.meta.env.VITE_BASE_URL;
+  const [cookie, setCookie, removeCookie] = useCookies(["token"]);
+  const token = cookie.token;
+  const headers = {
+    Authorization: `Bearer ${token}`,
+  };
+
+  useEffect(() => {
+    if (userDetails.skills) {
+      setSkills(userDetails.skills.split(", "));
+      setBaseSkills(userDetails.skills.split(", "));
+    }
+  }, [userDetails]);
+
+  const [skills, setSkills] = useState([]);
+  const [baseskills, setBaseSkills] = useState([]);
   const [edit, setEdit] = useState(false);
   const [newSkill, setNewSkill] = useState("");
 
@@ -30,8 +34,23 @@ const SkillSection = ({ userDetails, createAlert }) => {
   const saveNewSkills = () => {
     setEdit(false);
     if (baseskills !== skills) {
-      createAlert("Skills updated successfully", "success");
-      setBaseSkills(skills);
+      axios
+        .put(
+          `${BASE_URL}/api/user/profile/skills/${userDetails.username}`,
+          {
+            newSkills: skills.join(", "),
+          },
+          { headers: headers }
+        )
+        .then(() => {
+          createAlert("Skills updated successfully", "success");
+          setBaseSkills(skills);
+        })
+        .catch((error) => {
+          console.log(error);
+          createAlert("An error occurred", "error");
+          setSkills(baseskills);
+        });
     }
   };
   return (
@@ -50,28 +69,30 @@ const SkillSection = ({ userDetails, createAlert }) => {
         </div>
       </div>
       {edit && (
-        <div className="flex flex-col w-[300px] sm:w-[500px] md:flex-row items-center justify-center text-center">
-          <input
-            type="text"
-            placeholder="Add a skill"
-            value={newSkill}
-            onChange={(e) => setNewSkill(e.target.value)}
-            maxLength={20}
-            className="border w-full border-black rounded-md p-2 m-2"
-          />
-          <div className="flex sm:flex-row sm:mb-1 mb-4">
-            <button
-              onClick={(e) => addSkill()}
-              className="bg-primary text-background hover:scale-110 text-lg hover:brightness-110 font-Roboto font-bold py-1 px-4 m-2 rounded-md"
-            >
-              Add
-            </button>
-            <button
-              onClick={(e) => saveNewSkills()}
-              className="bg-primary text-background hover:scale-110 text-lg hover:brightness-110 font-Roboto font-bold py-1 px-4 m-2 rounded-md"
-            >
-              Save
-            </button>
+        <div className="flex flex-col w-[300px] sm:w-[500px] items-center justify-center text-center">
+          <div className="w-full flex-col md:flex-row flex items-center justify-center">
+            <input
+              type="text"
+              placeholder="Add a skill"
+              value={newSkill}
+              onChange={(e) => setNewSkill(e.target.value)}
+              maxLength={20}
+              className="border w-full text-secondary bg-neutral-800 border-black rounded-md p-2"
+            />
+            <div className="flex sm:flex-row my-2 lg:my-0">
+              <button
+                onClick={(e) => addSkill()}
+                className="bg-primary text-background hover:scale-110 text-lg hover:brightness-110 font-Roboto font-bold w-20 py-1 m-2 rounded-md"
+              >
+                Add
+              </button>
+              <button
+                onClick={(e) => saveNewSkills()}
+                className="bg-primary text-background hover:scale-110 text-lg hover:brightness-110 font-Roboto font-bold w-20 py-1 m-2 rounded-md"
+              >
+                Save
+              </button>
+            </div>
           </div>
         </div>
       )}

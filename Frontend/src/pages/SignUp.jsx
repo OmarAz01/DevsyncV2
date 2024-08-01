@@ -51,6 +51,11 @@ export default function SignUp() {
       toast.error("Invalid email address");
       return;
     }
+    const usernameRegex = /^[a-zA-Z0-9]+$/;
+    if (!usernameRegex.test(data.get("username"))) {
+      toast.error("Username should not contain any symbols");
+      return;
+    }
 
     const user = {
       firstName: data.get("firstName"),
