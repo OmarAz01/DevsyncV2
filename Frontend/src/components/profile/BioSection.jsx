@@ -69,12 +69,12 @@ const BioSection = ({ userDetails, createAlert }) => {
         </div>
 
         <div className="flex flex-col min-w-[300px] mt-8 p-2 border rounded-3xl items-center  bg-neutral-900 border-primary">
-          <div className="flex flex-row items-center justify-center">
-            <h3 className="text-secondary text-xl sm:text-2xl font-Noto font-bold py-2">
+          <div className="flex flex-row items-center justify-center relative">
+            <h3 className="text-secondary text-xl sm:text-2xl px-8 font-Noto font-bold py-2">
               Bio
             </h3>
             <div
-              className="w-fit h-fit"
+              className="w-fit h-fit absolute right-0"
               onClick={(e) => {
                 setEdit(!edit);
               }}

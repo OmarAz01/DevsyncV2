@@ -55,12 +55,12 @@ const SkillSection = ({ userDetails, createAlert }) => {
   };
   return (
     <>
-      <div className="flex flex-row items-center justify-center text-center mb-2">
-        <h2 className="text-secondary text-2xl sm:text-3xl font-Roboto font-bold">
+      <div className="flex flex-row items-center justify-center relative text-center mb-2">
+        <h2 className="text-secondary text-2xl px-8 sm:text-3xl font-Roboto font-bold">
           Skills
         </h2>
         <div
-          className="w-fit h-fit"
+          className="w-fit h-fit absolute right-0"
           onClick={(e) => {
             setEdit(!edit);
           }}
@@ -96,7 +96,7 @@ const SkillSection = ({ userDetails, createAlert }) => {
           </div>
         </div>
       )}
-      <div className="flex flex-wrap justify-center items-center">
+      <div className="flex flex-wrap justify-center items-center pb-8 pt-2">
         {skills &&
           skills.map((skill, index) =>
             edit ? (
