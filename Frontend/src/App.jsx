@@ -62,7 +62,7 @@ const App = () => {
         </Link>
         {loggedIn ? (
           <>
-            <Link to={`/profile/${cookie.username}`}>
+            <Link to={`/profile/myprofile`}>
               <h4 className="p-4 text-primary hover:cursor-pointer hover:font-bold font-Roboto text-xl sm:text-2xl">
                 {" "}
                 Profile

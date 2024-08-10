@@ -3,6 +3,7 @@ package com.devsync.v2.service;
 import com.devsync.v2.dto.ProfileDetailsDTO;
 import com.devsync.v2.dto.UpdateBioDTO;
 import com.devsync.v2.dto.UpdateSkillsDTO;
+import com.devsync.v2.dto.UpdateUserLinkDTO;
 import com.devsync.v2.entity.ProfileDetails;
 import com.devsync.v2.entity.UserEntity;
 import com.devsync.v2.repo.ProfileDetailsRepo;
@@ -22,6 +23,18 @@ public class ProfileDetailsServiceImpl implements ProfileDetailsService {
     private final UserRepo userRepo;
     @Override
     public ResponseEntity<ProfileDetailsDTO> findByUsername(String username) {
+
+        // This is a special case where the user is requesting their own profile
+        if (username.equals("myprofile")) {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            Object principal = authentication.getPrincipal();
+            if (principal instanceof UserEntity) {
+                UserEntity user = (UserEntity) principal;
+                ProfileDetails profileDetails = user.getProfileDetails();
+                return ResponseEntity.status(200).body(ProfileDetailsDTO.convertToDTO(profileDetails));
+            }
+            return ResponseEntity.status(403).body(null);
+        }
 
         Optional<UserEntity> user = userRepo.findByUsername(username);
         if (user.isEmpty()) {
@@ -93,5 +106,27 @@ public class ProfileDetailsServiceImpl implements ProfileDetailsService {
     @Override
     public ResponseEntity<Long> deleteProfileDetails(Long userId) {
         return null;
+    }
+
+    @Override
+    public ResponseEntity<ProfileDetailsDTO> updateUserLink(String username, UpdateUserLinkDTO newUserLink) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Object principal = authentication.getPrincipal();
+        if (principal instanceof UserEntity) {
+            UserEntity user = (UserEntity) principal;
+            if (!user.getUsername().equals(username)) {
+                return ResponseEntity.status(403).body(null);
+            }
+            ProfileDetails profileDetails1 = user.getProfileDetails();
+            profileDetails1.setUserLink(newUserLink.getNewUserLink());
+            try {
+                profileDetailsRepo.save(profileDetails1);
+                return ResponseEntity.status(200).body(ProfileDetailsDTO.convertToDTO(profileDetails1));
+            }
+            catch (Exception e) {
+                return ResponseEntity.status(500).body(null);
+            }
+        }
+        return ResponseEntity.status(403).body(null);
     }
 }

@@ -1,9 +1,6 @@
 package com.devsync.v2.controller;
 
-import com.devsync.v2.dto.ProfileDetailsDTO;
-import com.devsync.v2.dto.UpdateBioDTO;
-import com.devsync.v2.dto.UpdateSkillsDTO;
-import com.devsync.v2.dto.UserDTO;
+import com.devsync.v2.dto.*;
 import com.devsync.v2.entity.ProfileDetails;
 import com.devsync.v2.service.ProfileDetailsService;
 import com.devsync.v2.service.UserService;
@@ -31,6 +28,11 @@ public class UserController {
     @PutMapping("/profile/bio/{username}")
     public ResponseEntity<ProfileDetailsDTO> updateBio(@PathVariable String username, @RequestBody UpdateBioDTO newBio) {
         return profileDetailsService.updateBio(username, newBio);
+    }
+
+    @PutMapping("/profile/userlink/{username}")
+    public ResponseEntity<ProfileDetailsDTO> updateUserLink(@PathVariable String username, @RequestBody UpdateUserLinkDTO newUserLink) {
+        return profileDetailsService.updateUserLink(username, newUserLink);
     }
 
 }

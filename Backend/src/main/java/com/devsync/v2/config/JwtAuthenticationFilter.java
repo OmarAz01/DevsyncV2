@@ -30,7 +30,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
         System.out.println("Filtering request: " + request.getServletPath());
-        if (isRequestToOpenEndpoint(request)) {
+        if (isRequestToOpenEndpoint(request) && !request.getServletPath().contains("myprofile")) {
             filterChain.doFilter(request, response);
             return;
         }

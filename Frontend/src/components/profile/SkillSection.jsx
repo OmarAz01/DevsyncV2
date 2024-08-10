@@ -3,7 +3,7 @@ import ModeEditIcon from "@mui/icons-material/ModeEdit";
 import { useCookies } from "react-cookie";
 import axios from "axios";
 
-const SkillSection = ({ userDetails, createAlert }) => {
+const SkillSection = ({ userDetails, createAlert, currUserProfile }) => {
   const BASE_URL = import.meta.env.VITE_BASE_URL;
   const [cookie, setCookie, removeCookie] = useCookies(["token"]);
   const token = cookie.token;
@@ -56,17 +56,19 @@ const SkillSection = ({ userDetails, createAlert }) => {
   return (
     <>
       <div className="flex flex-row items-center justify-center relative text-center mb-2">
-        <h2 className="text-secondary text-2xl px-8 sm:text-3xl font-Roboto font-bold">
+        <h2 className="text-secondary text-xl px-8 sm:text-2xl font-Roboto font-medium">
           Skills
         </h2>
-        <div
-          className="w-fit h-fit absolute right-0"
-          onClick={(e) => {
-            setEdit(!edit);
-          }}
-        >
-          <ModeEditIcon className="text-primary hover:brightness-110 ml-4 hover:scale-110 hover:cursor-pointer" />
-        </div>
+        {currUserProfile && (
+          <div
+            className="w-fit h-fit absolute right-0"
+            onClick={(e) => {
+              setEdit(!edit);
+            }}
+          >
+            <ModeEditIcon className="text-primary pb-1 sm:pb-0 hover:brightness-110 ml-4 hover:scale-110 hover:cursor-pointer" />
+          </div>
+        )}
       </div>
       {edit && (
         <div className="flex flex-col w-[300px] sm:w-[500px] items-center justify-center text-center">
