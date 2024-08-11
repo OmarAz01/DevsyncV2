@@ -55,19 +55,18 @@ public class ProfileDetailsServiceImpl implements ProfileDetailsService {
     }
 
     @Override
-    public ResponseEntity<ProfileDetailsDTO> updateSkills(String username, UpdateSkillsDTO newSkills) {
+    public ResponseEntity<ProfileDetailsDTO> updateProfileDetails(String username, ProfileDetailsDTO updatedProfile) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Object principal = authentication.getPrincipal();
         if (principal instanceof UserEntity) {
             UserEntity user = (UserEntity) principal;
-            if (!user.getUsername().equals(username)) {
-                return ResponseEntity.status(403).body(null);
-            }
-            ProfileDetails profileDetails1 = user.getProfileDetails();
-            profileDetails1.setSkills(newSkills.getNewSkills());
+            ProfileDetails updatedProfileDetails = user.getProfileDetails();
+            updatedProfileDetails.setBio(updatedProfile.getBio());
+            updatedProfileDetails.setSkills(updatedProfile.getSkills());
+            updatedProfileDetails.setUserLink(updatedProfile.getUserLink());
             try {
-                profileDetailsRepo.save(profileDetails1);
-                return ResponseEntity.status(200).body(ProfileDetailsDTO.convertToDTO(profileDetails1));
+                profileDetailsRepo.save(updatedProfileDetails);
+                return ResponseEntity.status(200).body(ProfileDetailsDTO.convertToDTO(updatedProfileDetails));
             }
             catch (Exception e) {
                 return ResponseEntity.status(500).body(null);
@@ -77,56 +76,8 @@ public class ProfileDetailsServiceImpl implements ProfileDetailsService {
     }
 
     @Override
-    public ResponseEntity<ProfileDetailsDTO> updateBio(String username, UpdateBioDTO newBio) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Object principal = authentication.getPrincipal();
-        if (principal instanceof UserEntity) {
-            UserEntity user = (UserEntity) principal;
-            if (!user.getUsername().equals(username)) {
-                return ResponseEntity.status(403).body(null);
-            }
-            ProfileDetails profileDetails1 = user.getProfileDetails();
-            profileDetails1.setBio(newBio.getNewBio());
-            try {
-                profileDetailsRepo.save(profileDetails1);
-                return ResponseEntity.status(200).body(ProfileDetailsDTO.convertToDTO(profileDetails1));
-            }
-            catch (Exception e) {
-                return ResponseEntity.status(500).body(null);
-            }
-        }
-        return ResponseEntity.status(403).body(null);
-    }
-
-    @Override
-    public ResponseEntity<ProfileDetails> updateProfileDetails(Long userId, ProfileDetails profileDetails) {
+    public ResponseEntity<Long> deleteProfileDetails(String username, ProfileDetailsDTO profileDetailsDTO) {
         return null;
     }
 
-    @Override
-    public ResponseEntity<Long> deleteProfileDetails(Long userId) {
-        return null;
-    }
-
-    @Override
-    public ResponseEntity<ProfileDetailsDTO> updateUserLink(String username, UpdateUserLinkDTO newUserLink) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Object principal = authentication.getPrincipal();
-        if (principal instanceof UserEntity) {
-            UserEntity user = (UserEntity) principal;
-            if (!user.getUsername().equals(username)) {
-                return ResponseEntity.status(403).body(null);
-            }
-            ProfileDetails profileDetails1 = user.getProfileDetails();
-            profileDetails1.setUserLink(newUserLink.getNewUserLink());
-            try {
-                profileDetailsRepo.save(profileDetails1);
-                return ResponseEntity.status(200).body(ProfileDetailsDTO.convertToDTO(profileDetails1));
-            }
-            catch (Exception e) {
-                return ResponseEntity.status(500).body(null);
-            }
-        }
-        return ResponseEntity.status(403).body(null);
-    }
 }

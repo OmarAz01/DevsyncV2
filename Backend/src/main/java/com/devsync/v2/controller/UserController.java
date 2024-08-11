@@ -20,19 +20,9 @@ public class UserController {
         return profileDetailsService.findByUsername(username);
     }
 
-    @PutMapping("/profile/skills/{username}")
-    public ResponseEntity<ProfileDetailsDTO> updateSkills(@PathVariable String username, @RequestBody UpdateSkillsDTO newSkills) {
-        return profileDetailsService.updateSkills(username, newSkills);
-    }
-
-    @PutMapping("/profile/bio/{username}")
-    public ResponseEntity<ProfileDetailsDTO> updateBio(@PathVariable String username, @RequestBody UpdateBioDTO newBio) {
-        return profileDetailsService.updateBio(username, newBio);
-    }
-
-    @PutMapping("/profile/userlink/{username}")
-    public ResponseEntity<ProfileDetailsDTO> updateUserLink(@PathVariable String username, @RequestBody UpdateUserLinkDTO newUserLink) {
-        return profileDetailsService.updateUserLink(username, newUserLink);
+    @PutMapping("/profile/{username}/update")
+    public ResponseEntity<ProfileDetailsDTO> updateProfile(@PathVariable String username, @RequestBody ProfileDetailsDTO updatedProfile) {
+        return profileDetailsService.updateProfileDetails(username, updatedProfile);
     }
 
 }

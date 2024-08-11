@@ -12,13 +12,8 @@ public interface ProfileDetailsService {
 
     ResponseEntity<ProfileDetailsDTO> save(ProfileDetails profileDetails);
 
-    ResponseEntity<ProfileDetailsDTO> updateSkills(String username, UpdateSkillsDTO newSkills);
+    ResponseEntity<ProfileDetailsDTO> updateProfileDetails(String username, ProfileDetailsDTO updatedProfile);
 
-    ResponseEntity<ProfileDetailsDTO> updateBio(String username, UpdateBioDTO newBio);
+    ResponseEntity<Long> deleteProfileDetails(String username, ProfileDetailsDTO profileDetailsDTO);
 
-    ResponseEntity<ProfileDetails> updateProfileDetails(Long userId, ProfileDetails profileDetails);
-
-    ResponseEntity<Long> deleteProfileDetails(Long userId);
-
-    ResponseEntity<ProfileDetailsDTO> updateUserLink(String username, UpdateUserLinkDTO newUserLink);
 }
