@@ -1,7 +1,6 @@
 package com.devsync.v2.security.service;
 
-import com.devsync.v2.dto.UserDTO;
-import com.devsync.v2.entity.ProfileDetails;
+import com.devsync.v2.entity.ProfileDetailsEntity;
 import com.devsync.v2.entity.Role;
 import com.devsync.v2.entity.UserEntity;
 import com.devsync.v2.security.entity.AuthenticationRequest;
@@ -19,14 +18,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.Collections;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -60,7 +57,7 @@ public class AuthService {
         user.setPassword(passwordEncoder.encode(request.getPassword()));
         user.setRole(Role.USER);
         String imageUri = "https://api.dicebear.com/9.x/avataaars-neutral/svg?seed=" + request.getUsername() + "&backgroundColor=f8d25c";
-        ProfileDetails profileDetails = new ProfileDetails();
+        ProfileDetailsEntity profileDetails = new ProfileDetailsEntity();
         profileDetails.setImageUri(imageUri);
         profileDetails.setSkills("Python, Java, C++");
         profileDetails.setBio("This is " + request.getUsername() + "'s bio. Nothing to see here.");

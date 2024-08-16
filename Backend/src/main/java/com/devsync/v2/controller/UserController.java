@@ -1,7 +1,6 @@
 package com.devsync.v2.controller;
 
 import com.devsync.v2.dto.*;
-import com.devsync.v2.entity.ProfileDetails;
 import com.devsync.v2.service.ProfileDetailsService;
 import com.devsync.v2.service.UserService;
 import lombok.RequiredArgsConstructor;

@@ -1,10 +1,7 @@
 package com.devsync.v2.service;
 
 import com.devsync.v2.dto.ProfileDetailsDTO;
-import com.devsync.v2.dto.UpdateBioDTO;
-import com.devsync.v2.dto.UpdateSkillsDTO;
-import com.devsync.v2.dto.UpdateUserLinkDTO;
-import com.devsync.v2.entity.ProfileDetails;
+import com.devsync.v2.entity.ProfileDetailsEntity;
 import com.devsync.v2.entity.UserEntity;
 import com.devsync.v2.repo.ProfileDetailsRepo;
 import com.devsync.v2.repo.UserRepo;
@@ -30,7 +27,7 @@ public class ProfileDetailsServiceImpl implements ProfileDetailsService {
             Object principal = authentication.getPrincipal();
             if (principal instanceof UserEntity) {
                 UserEntity user = (UserEntity) principal;
-                ProfileDetails profileDetails = user.getProfileDetails();
+                ProfileDetailsEntity profileDetails = user.getProfileDetails();
                 return ResponseEntity.status(200).body(ProfileDetailsDTO.convertToDTO(profileDetails));
             }
             return ResponseEntity.status(403).body(null);
@@ -45,7 +42,7 @@ public class ProfileDetailsServiceImpl implements ProfileDetailsService {
     }
 
     @Override
-    public ResponseEntity<ProfileDetailsDTO> save(ProfileDetails profileDetails) {
+    public ResponseEntity<ProfileDetailsDTO> save(ProfileDetailsEntity profileDetails) {
         try {
             profileDetailsRepo.save(profileDetails);
             return ResponseEntity.status(200).body(ProfileDetailsDTO.convertToDTO(profileDetails));
@@ -60,7 +57,7 @@ public class ProfileDetailsServiceImpl implements ProfileDetailsService {
         Object principal = authentication.getPrincipal();
         if (principal instanceof UserEntity) {
             UserEntity user = (UserEntity) principal;
-            ProfileDetails updatedProfileDetails = user.getProfileDetails();
+            ProfileDetailsEntity updatedProfileDetails = user.getProfileDetails();
             updatedProfileDetails.setBio(updatedProfile.getBio());
             updatedProfileDetails.setSkills(updatedProfile.getSkills());
             updatedProfileDetails.setUserLink(updatedProfile.getUserLink());

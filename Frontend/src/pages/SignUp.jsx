@@ -12,6 +12,11 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
+import {
+  RegExpMatcher,
+  englishDataset,
+  englishRecommendedTransformers,
+} from "obscenity";
 
 const defaultTheme = createTheme({
   palette: {
@@ -25,18 +30,46 @@ const defaultTheme = createTheme({
 export default function SignUp() {
   const BASE_URL = import.meta.env.VITE_BASE_URL;
   const [cookie, setCookie, removeCookie] = useCookies(["token"]);
-  const passwordRegex =
-    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,30}$/;
-  const emailRegex =
-    /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
 
     // Form Validation
+    const profanityMatcher = new RegExpMatcher({
+      ...englishDataset.build(),
+      ...englishRecommendedTransformers,
+    });
     const passwordRegex =
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,30}$/;
+    const emailRegex =
+      /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+
+    if (profanityMatcher.hasMatch(data.get("username"))) {
+      toast.error("Username contains profanity");
+      return;
+    }
+    if (profanityMatcher.hasMatch(data.get("firstName"))) {
+      toast.error("First name contains profanity");
+      return;
+    }
+    if (profanityMatcher.hasMatch(data.get("lastName"))) {
+      toast.error("Last name contains profanity");
+      return;
+    }
+    if (profanityMatcher.hasMatch(data.get("email"))) {
+      toast.error("Email contains profanity");
+      return;
+    }
+    if (
+      data.get("username").toLowerCase() === "admin" ||
+      data.get("username").toLowerCase() === "administrator" ||
+      data.get("username").toLowerCase() === "myprofile"
+    ) {
+      toast.error("Username is not allowed");
+      return;
+    }
+
     if (!passwordRegex.test(data.get("password"))) {
       toast.error(
         "Password must contain an uppercase letter, a symbol, and a number"

@@ -5,20 +5,23 @@ import lombok.Data;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
+import java.util.Date;
+
 @Entity
 @Data
-@Table(name = "profile_details")
-public class ProfileDetails {
+@Table(name = "post")
+public class PostEntity {
     @Id
-    private Long userId;
-    @OneToOne(fetch = FetchType.LAZY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long postId;
+    private String title;
+    private String description;
+    private String skills;
+    private String createdAt;
+    @ManyToOne(fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @MapsId
     @JoinColumn(name = "userId")
     private UserEntity user;
-    @Column(columnDefinition = "TEXT")
-    private String bio;
-    private String imageUri;
-    private String userLink;
-    private String skills;
+
 }

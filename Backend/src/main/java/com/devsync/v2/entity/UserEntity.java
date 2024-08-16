@@ -1,8 +1,6 @@
 package com.devsync.v2.entity;
 
 import com.devsync.v2.security.entity.RefreshTokenEntity;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.ToString;
@@ -32,11 +30,15 @@ public class UserEntity implements UserDetails {
     private Role role;
     @OneToOne(mappedBy = "user", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY, orphanRemoval = true)
     @ToString.Exclude
-    private ProfileDetails profileDetails;
+    private ProfileDetailsEntity profileDetails;
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY, orphanRemoval = true)
     @ToString.Exclude
     private RefreshTokenEntity refreshToken;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY, orphanRemoval = true)
+    @ToString.Exclude
+    private List<PostEntity> posts;
 
     @Override
     public boolean isAccountNonExpired() {

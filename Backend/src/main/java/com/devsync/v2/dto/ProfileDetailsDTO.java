@@ -1,7 +1,6 @@
 package com.devsync.v2.dto;
 
-import com.devsync.v2.entity.ProfileDetails;
-import com.devsync.v2.entity.UserEntity;
+import com.devsync.v2.entity.ProfileDetailsEntity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -17,7 +16,7 @@ public class ProfileDetailsDTO {
     private String skills;
     private String userLink;
 
-    public static ProfileDetailsDTO convertToDTO(ProfileDetails profileDetails) {
+    public static ProfileDetailsDTO convertToDTO(ProfileDetailsEntity profileDetails) {
         return new ProfileDetailsDTO(
                 profileDetails.getUser().getUsername(),
                 profileDetails.getUser().getEmail(),
