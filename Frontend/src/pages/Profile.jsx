@@ -149,7 +149,7 @@ const Profile = () => {
       document.querySelector("header").style.pointerEvents = "none";
     } else {
       document.body.style.overflow = "auto";
-      document.querySelector("header").style.pointerEvents = "none";
+      document.querySelector("header").style.pointerEvents = "auto";
     }
   }, [editProfile]);
 

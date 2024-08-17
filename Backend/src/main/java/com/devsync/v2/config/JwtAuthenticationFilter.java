@@ -62,6 +62,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private boolean isRequestToOpenEndpoint(HttpServletRequest request) {
         AntPathMatcher pathMatcher = new AntPathMatcher();
+        if ("GET".equals(request.getMethod()) && pathMatcher.match("/api/posts", request.getServletPath())) {
+            return true;
+        }
         return openEndpoints.stream().anyMatch(pattern -> pathMatcher.match(pattern, request.getServletPath()));
     }
 }

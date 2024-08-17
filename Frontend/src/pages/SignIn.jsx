@@ -61,7 +61,7 @@ export default function SignIn() {
           <CssBaseline />
           <Box
             sx={{
-              marginTop: 12,
+              marginTop: 8,
               display: "flex",
               flexDirection: "column",
               alignItems: "center",
@@ -72,12 +72,12 @@ export default function SignIn() {
                 <h1 className="text-5xl font-Roboto text-primary pb-2">
                   devsync
                 </h1>
-                <p className="text-secondary font-Noto">
+                <p className="text-secondary text-base font-Noto">
                   Collaborate with developers on different projects
                 </p>
               </div>
               <div className="flex justify-center text-center flex-col lg:w-2/3 border-zinc-700 lg:pl-12 lg:border-l">
-                <h2 className="text-3xl font-Roboto">Sign In</h2>
+                <h2 className="text-2xl md:text-3xl font-Roboto">Sign In</h2>
                 <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1 }}>
                   <TextField
                     margin="normal"

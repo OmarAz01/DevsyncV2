@@ -18,6 +18,7 @@ const Feed = () => {
       <div className="flex flex-row max-w-screen-2xl w-full p-4">
         <div className="flex flex-col items-center justify-center p-2 sm:p-4 lg:border-r border-primary w-full lg:w-2/3">
           <CreatePost createAlert={createAlert} />
+          <GetAllPosts createAlert={createAlert} />
         </div>
         <div className="hidden lg:flex flex-col text-center items-center sticky top-0 w-1/3">
           <h1 className="text-4xl font-bold text-primary">Syncs</h1>

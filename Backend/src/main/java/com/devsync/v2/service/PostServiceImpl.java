@@ -13,6 +13,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -30,7 +34,6 @@ public class PostServiceImpl implements PostService {
     @Override
     @Transactional
     public ResponseEntity<PostDTO> createPost(PostDTO newPost) {
-        System.out.println("Creating post");
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Object principal = authentication.getPrincipal();
         if (principal instanceof UserEntity) {
@@ -40,8 +43,8 @@ public class PostServiceImpl implements PostService {
             postEntity.setUser(user);
             postEntity.setDescription(newPost.getDescription());
             postEntity.setTitle(newPost.getTitle());
-            Date date = new Date();
-            postEntity.setCreatedAt(date.toString());
+            LocalDateTime now = LocalDateTime.now(ZoneOffset.UTC);
+            postEntity.setCreatedAt(now);
             postEntity.setSkills(newPost.getSkills());
             try {
                 postRepo.save(postEntity);
@@ -53,5 +56,25 @@ public class PostServiceImpl implements PostService {
             }
         }
         return ResponseEntity.status(403).body(null);
+    }
+
+    @Override
+    public ResponseEntity<List<PostDTO>> getAllPosts() {
+        List<PostEntity> posts;
+        List<PostDTO> allPostDTOs = new ArrayList<>();
+        try {
+            posts = postRepo.findAll();
+            if (posts.isEmpty()) {
+                return ResponseEntity.status(404).body(null);
+            }
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).body(null);
+        }
+        for (PostEntity post : posts) {
+            allPostDTOs.add(PostDTO.convertToDTO(post));
+        }
+        return ResponseEntity.status(200).body(allPostDTOs);
     }
 }

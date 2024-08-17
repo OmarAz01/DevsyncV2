@@ -26,6 +26,10 @@ const CreatePost = ({ createAlert }) => {
 
   const handleCreatePost = (e) => {
     e.preventDefault();
+    if (cookie.token === undefined || cookie.token === null) {
+      createAlert("You must be logged in to create a post", "error");
+      return;
+    }
     const profanityMatcher = new RegExpMatcher({
       ...englishDataset.build(),
       ...englishRecommendedTransformers,
@@ -60,16 +64,13 @@ const CreatePost = ({ createAlert }) => {
       createAlert("Title and description are required", "error");
       return;
     }
-    if (cookie.token === undefined || cookie.token === null) {
-      createAlert("You must be logged in to create a post", "error");
-      return;
-    }
+
     const headers = {
       Authorization: `Bearer ${cookie.token}`,
     };
     axios
       .post(
-        `${BASE_URL}/api/post`,
+        `${BASE_URL}/api/posts`,
         {
           title: formValues.get("title"),
           description: formValues.get("description"),
@@ -111,21 +112,21 @@ const CreatePost = ({ createAlert }) => {
             type="text"
             name="title"
             placeholder="*Title"
-            maxLength={100}
+            maxLength={75}
             className="text-base border text-secondary font-Roboto rounded-md border-black bg-neutral-700 p-2"
           />
           <h4 className="text-xs lg:text-sm text-right w-full pr-1 italic font-Roboto text-neutral-500 mb-3">
-            Max 100 characters
+            Max 75 characters
           </h4>
           <input
             type="text"
             name="skills"
-            maxLength={250}
-            placeholder="Skills seperated by a comma (e.g., MySQL, React, Java)"
+            maxLength={30}
+            placeholder="Highlight 3 Skills seperated by a comma (e.g. MySQL, React, Java)"
             className="text-sm border text-secondary rounded-md font-Noto border-black bg-neutral-700 p-2"
           />
           <h4 className="text-xs lg:text-sm text-right w-full pr-1 italic font-Roboto text-neutral-500 mb-3">
-            Max 5 skills
+            Max 3 skills
           </h4>
           <textarea
             className="border text-sm rounded-md text-secondary font-Noto border-black bg-neutral-700 p-2"
@@ -134,7 +135,7 @@ const CreatePost = ({ createAlert }) => {
             ref={textAreaRef}
             onChange={(e) => setDescription(e.target.value)}
             value={description}
-            maxLength={6000}
+            maxLength={1000}
             rows={2}
           />
           <div className="w-full pr-1">

@@ -48,6 +48,7 @@ const App = () => {
     removeCookie("token");
     removeCookie("user");
     removeCookie("username");
+    setLoggedIn(false);
     window.location.href = "/signin";
   };
 

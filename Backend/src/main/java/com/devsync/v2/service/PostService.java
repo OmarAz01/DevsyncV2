@@ -10,4 +10,6 @@ public interface PostService {
     ResponseEntity<List<PostDTO>> findByUsername(String username);
 
     ResponseEntity<PostDTO> createPost(PostDTO newPost);
+
+    ResponseEntity<List<PostDTO>> getAllPosts();
 }

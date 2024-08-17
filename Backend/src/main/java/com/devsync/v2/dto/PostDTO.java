@@ -23,7 +23,7 @@ public class PostDTO {
                 post.getTitle(),
                 post.getDescription(),
                 post.getSkills(),
-                post.getCreatedAt(),
+                post.getCreatedAt().toString(),
                 post.getUser().getUsername(),
                 post.getUser().getProfileDetails().getImageUri()
         );
