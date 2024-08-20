@@ -29,10 +29,10 @@ export default function SignIn() {
   const BASE_URL = import.meta.env.VITE_BASE_URL;
   const [cookie, setCookie] = useCookies(["token"]);
 
-  const handleSubmit = async (event) => {
+  const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    await axios
+    axios
       .post(BASE_URL + "/api/auth/login", {
         email: data.get("email"),
         password: data.get("password"),

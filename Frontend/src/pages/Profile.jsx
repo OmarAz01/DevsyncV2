@@ -272,8 +272,8 @@ const Profile = () => {
               <h1 className="text-secondary text-center text-xl sm:text-2xl border-b pb-2 px-4 sm:mt-0 mt-2 border-neutral-700 font-Roboto font-bold">
                 Edit Profile
               </h1>
-              <div className="flex flex-col h-full overflow-y-auto px-4">
-                <div className="flex-col mt-6 sm:mt-10 flex justify-start w-full items-start">
+              <div className="flex flex-col h-full overflow-y-auto pb-2 mt-2 px-4">
+                <div className="flex-col mt-2 sm:mt-6 flex justify-start w-full items-start">
                   <h2 className="text-secondary text-lg sm:text-xl font-Roboto font-medium">
                     User Header Link
                   </h2>
@@ -292,7 +292,7 @@ const Profile = () => {
                         userLink: e.target.value,
                       })
                     }
-                    className="w-full p-2 mt-2 bg-background text-secondary rounded-md border border-neutral-700"
+                    className="w-full p-2 mt-2 bg-background text-secondary rounded-md border border-neutral-400"
                   />
                 </div>
                 <div className="flex-col mt-4 flex justify-start w-full items-start">
@@ -314,7 +314,7 @@ const Profile = () => {
                         bio: e.target.value,
                       })
                     }
-                    className="w-full p-2 font-Noto mt-2 resize-none h-[200px] bg-background text-secondary rounded-md border border-neutral-700"
+                    className="w-full p-2 font-Noto mt-2 resize-none h-[200px] bg-background text-secondary rounded-md border border-neutral-400"
                   />
                 </div>
                 <div className="flex-col mt-4 flex justify-start w-full items-start">
@@ -337,7 +337,7 @@ const Profile = () => {
                         skills: e.target.value,
                       })
                     }
-                    className="w-full p-2 mt-2 bg-background text-secondary rounded-md border border-neutral-700"
+                    className="w-full p-2 mt-2 bg-background text-secondary rounded-md border border-neutral-400"
                   />
                 </div>
 

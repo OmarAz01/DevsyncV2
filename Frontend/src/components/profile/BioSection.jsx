@@ -23,7 +23,7 @@ const BioSection = ({
       />
       <div className="p-2 flex flex-col items-center text-center w-full">
         <div className="flex flex-row items-center mt-2 justify-center relative text-center w-full">
-          <h1 className="sm:text-3xl text-2xl text-secondary font-Roboto px-4 font-bold break-words">
+          <h1 className="sm:text-2xl text-xl text-secondary font-Roboto px-4 font-bold break-words">
             {userDetails.username}
           </h1>
           {currUserProfile && (
@@ -62,7 +62,7 @@ const BioSection = ({
               Bio
             </h3>
           </div>
-          <p className="text-secondary text-md sm:text-lg font-Noto px-4 pb-4 w-full text-center break-words">
+          <p className="text-secondary text-sm sm:text-base font-Noto px-4 pb-4 w-full text-center break-words">
             {userDetails.bio
               ? userDetails.bio
               : "This is devsync's bio. Nothing to see here."}

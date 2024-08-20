@@ -25,7 +25,7 @@ const SkillSection = ({ userDetails, createAlert, currUserProfile }) => {
           skills.map((skill, index) => (
             <div
               key={index}
-              className="flex justify-center items-center bg-neutral-900 text-secondary font-Noto text-md sm:text-lg px-4 py-2 m-2 rounded-3xl border border-primary"
+              className="flex justify-center items-center bg-neutral-900 text-secondary font-Noto text-sm sm:text-base px-4 py-2 m-2 rounded-3xl border border-primary"
             >
               {skill}
             </div>

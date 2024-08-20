@@ -1,0 +1,20 @@
+package com.devsync.v2.controller;
+
+import com.devsync.v2.dto.SyncDTO;
+import com.devsync.v2.service.SyncService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequiredArgsConstructor
+@RequestMapping("/api/sync")
+public class SyncController {
+    private final SyncService syncService;
+
+    @PostMapping()
+    public ResponseEntity<SyncDTO> sync(@RequestBody SyncDTO newSync) {
+        return syncService.createSync(newSync);
+    }
+
+}

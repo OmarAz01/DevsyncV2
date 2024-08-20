@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { formatDistanceToNow, parseISO } from "date-fns";
 
-const GetAllPosts = () => {
+const GetAllPosts = ({ createAlert, turnOnSyncModal }) => {
   const BASE_URL = import.meta.env.VITE_BASE_URL;
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -12,8 +12,8 @@ const GetAllPosts = () => {
     getNewPosts();
   }, []);
 
-  const getNewPosts = async () => {
-    await axios
+  const getNewPosts = () => {
+    axios
       .get(BASE_URL + "/api/posts")
       .then((response) => {
         formatPosts(response.data);
@@ -23,6 +23,7 @@ const GetAllPosts = () => {
         if (error.response && error.response.status === 404) {
           setLastPost(true);
         }
+        createAlert("Failed to get posts", "error");
         console.log(error);
       });
   };
@@ -55,25 +56,41 @@ const GetAllPosts = () => {
         {posts.map((post) => (
           <div
             key={post.id}
-            className="border rounded-2xl border-black mb-4 bg-neutral-800 w-full max-w-[700px] px-2 pt-3 pb-1 md:pt-4 md:px-4"
+            className="border-b border-neutral-500 mb-4 w-full max-w-[700px] px-4 pt-2 pb-3"
           >
-            <div className="flex justify-between my-1 md:mt-1 md:mb-1 px-1">
-              <h1 className="text-xl text-secondary font-Roboto font-bold break-words w-full">
-                {post.title}
-              </h1>
+            <div className="flex justify-between items-center mb-1 pt-2">
+              <div className="flex items-center">
+                <a
+                  href={`${window.location.origin}/profile/${post.username}`}
+                  className="text-lg font-Roboto font-bold text-primary hover:underline"
+                >
+                  {post.username}
+                </a>
+                <span className="ml-2 text-sm text-neutral-500 italic">
+                  {post.createdAt}
+                </span>
+              </div>
+              <button
+                onClick={(e) => turnOnSyncModal(post.username)}
+                className="text-sm text-black font-Roboto font-bold bg-primary px-4 py-1 rounded-lg hover:scale-105 hover:brightness-110"
+              >
+                Sync
+              </button>
             </div>
-
-            <div className="flex flex-wrap items-center my-1 md:mt-1 md:mb-1">
+            <div className="text-xl text-secondary font-Roboto font-bold break-words mb-2">
+              {post.title}
+            </div>
+            <div className="flex flex-wrap items-center  pb-1">
               {post.skills.map((skill, index) => (
                 <div
                   key={index}
-                  className="flex justify-center my-1 items-center bg-neutral-900 text-secondary font-Noto px-3 py-0.5 mr-2 rounded-3xl border border-primary"
+                  className="flex justify-center items-center bg-neutral-900 text-secondary mb-2 font-Noto px-3 py-0.5 mr-2 rounded-3xl border border-primary"
                 >
                   {skill}
                 </div>
               ))}
             </div>
-            <div className="mt-2 mb-4 font-Noto text-sm text-secondary break-words">
+            <div className="mb-4 font-Noto text-sm text-secondary break-words">
               {post.showingAll ? post.description : post.shorterDescription}
               {!post.showingAll && (
                 <button
@@ -92,16 +109,6 @@ const GetAllPosts = () => {
                   Show more
                 </button>
               )}
-            </div>
-            <div className="text-right text-sm text-neutral-500 w-full italic font-Roboto">
-              Posted by{" "}
-              <a
-                href={`${window.location.origin}/profile/${post.username}`}
-                className="hover:underline hover:text-primary"
-              >
-                {post.username}
-              </a>{" "}
-              {post.createdAt}
             </div>
           </div>
         ))}

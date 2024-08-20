@@ -93,9 +93,9 @@ const CreatePost = ({ createAlert }) => {
   };
 
   return (
-    <div className="border rounded-2xl border-black bg-neutral-800 w-full max-w-[700px] p-2 md:p-4">
+    <div className="border rounded-2xl border-neutral-500 bg-neutral-900 w-full max-w-[700px] p-2 md:p-4">
       <div className="flex items-center justify-between my-1 md:mt-1 md:mb-1 px-1">
-        <h1 className="sm:text-2xl text-xl font-semibold text-primary">
+        <h1 className="sm:text-2xl text-xl font-semibold text-secondary">
           Create Post
         </h1>
         <button
@@ -113,7 +113,7 @@ const CreatePost = ({ createAlert }) => {
             name="title"
             placeholder="*Title"
             maxLength={75}
-            className="text-base border text-secondary font-Roboto rounded-md border-black bg-neutral-700 p-2"
+            className="text-base border text-secondary font-Roboto rounded-md border-neutral-400 bg-neutral-800 p-2"
           />
           <h4 className="text-xs lg:text-sm text-right w-full pr-1 italic font-Roboto text-neutral-500 mb-3">
             Max 75 characters
@@ -123,13 +123,13 @@ const CreatePost = ({ createAlert }) => {
             name="skills"
             maxLength={30}
             placeholder="Highlight 3 Skills seperated by a comma (e.g. MySQL, React, Java)"
-            className="text-sm border text-secondary rounded-md font-Noto border-black bg-neutral-700 p-2"
+            className="text-sm border text-secondary rounded-md font-Noto border-neutral-400 bg-neutral-800 p-2"
           />
           <h4 className="text-xs lg:text-sm text-right w-full pr-1 italic font-Roboto text-neutral-500 mb-3">
             Max 3 skills
           </h4>
           <textarea
-            className="border text-sm rounded-md text-secondary font-Noto border-black bg-neutral-700 p-2"
+            className="border text-sm rounded-md text-secondary font-Noto border-neutral-400 bg-neutral-800 p-2"
             name="description"
             placeholder="*A brief description of your project and the type of collaborator you are looking for."
             ref={textAreaRef}
