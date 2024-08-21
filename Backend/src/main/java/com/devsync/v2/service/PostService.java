@@ -11,5 +11,5 @@ public interface PostService {
 
     ResponseEntity<PostDTO> createPost(PostDTO newPost);
 
-    ResponseEntity<List<PostDTO>> getAllPosts();
+    ResponseEntity<List<PostDTO>> getNewPosts(String lastPostDate);
 }

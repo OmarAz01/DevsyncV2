@@ -1,30 +1,41 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { formatDistanceToNow, parseISO } from "date-fns";
+import { formatDistanceToNow, parseISO, set } from "date-fns";
 
 const GetAllPosts = ({ createAlert, turnOnSyncModal }) => {
   const BASE_URL = import.meta.env.VITE_BASE_URL;
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [lastPost, setLastPost] = useState(false);
+  const [lastPostDate, setLastPostDate] = useState("");
 
   useEffect(() => {
     getNewPosts();
   }, []);
 
   const getNewPosts = () => {
+    setLoading(true);
+    let url = BASE_URL + "/api/posts";
+    if (lastPostDate) {
+      url += "?lastPostDate=" + lastPostDate;
+    }
     axios
-      .get(BASE_URL + "/api/posts")
+      .get(url)
       .then((response) => {
         formatPosts(response.data);
         setLoading(false);
+        setLastPostDate(response.data[response.data.length - 1].createdAt);
       })
       .catch((error) => {
         if (error.response && error.response.status === 404) {
           setLastPost(true);
+          createAlert("No more posts", "error");
+          setLoading(false);
+          return;
         }
         createAlert("Failed to get posts", "error");
         console.log(error);
+        setLoading(false);
       });
   };
 
@@ -47,8 +58,29 @@ const GetAllPosts = ({ createAlert, turnOnSyncModal }) => {
         showingAll,
       };
     });
-    setPosts(formattedPosts);
+    setPosts((prevPosts) => [...prevPosts, ...formattedPosts]);
   };
+
+  const handleScroll = () => {
+    const scrollHeight = document.documentElement.scrollHeight;
+    const scrollTop = document.documentElement.scrollTop;
+    const clientHeight = document.documentElement.clientHeight;
+
+    if (
+      !loading &&
+      !lastPost &&
+      scrollTop + clientHeight >= scrollHeight - 200
+    ) {
+      getNewPosts();
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, [handleScroll]);
 
   return (
     <div className="flex flex-col w-full mt-8 max-w-[700px]">
@@ -80,16 +112,7 @@ const GetAllPosts = ({ createAlert, turnOnSyncModal }) => {
             <div className="text-xl text-secondary font-Roboto font-bold break-words mb-2">
               {post.title}
             </div>
-            <div className="flex flex-wrap items-center  pb-1">
-              {post.skills.map((skill, index) => (
-                <div
-                  key={index}
-                  className="flex justify-center items-center bg-neutral-900 text-secondary mb-2 font-Noto px-3 py-0.5 mr-2 rounded-3xl border border-primary"
-                >
-                  {skill}
-                </div>
-              ))}
-            </div>
+
             <div className="mb-4 font-Noto text-sm text-secondary break-words">
               {post.showingAll ? post.description : post.shorterDescription}
               {!post.showingAll && (
@@ -110,9 +133,29 @@ const GetAllPosts = ({ createAlert, turnOnSyncModal }) => {
                 </button>
               )}
             </div>
+            <div className="flex flex-wrap items-center pb-1">
+              {post.skills.map((skill, index) => (
+                <div
+                  key={index}
+                  className="flex justify-center items-center bg-neutral-900 text-secondary mb-1 font-Noto px-2 mr-2 rounded-xl border border-primary"
+                >
+                  {skill}
+                </div>
+              ))}
+            </div>
           </div>
         ))}
       </div>
+      {loading && (
+        <p className="text-center font-Roboto text-secondary font-bold italic">
+          Loading...
+        </p>
+      )}
+      {lastPost && (
+        <p className="text-center font-Roboto text-secondary font-bold italic">
+          No more posts
+        </p>
+      )}
     </div>
   );
 };

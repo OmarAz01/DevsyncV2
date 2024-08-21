@@ -3,11 +3,14 @@ import CreatePost from "../components/feed/CreatePost";
 import GetAllPosts from "../components/feed/GetAllPosts";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import SyncModal from "../components/feed/SyncModal";
+import SyncModal from "../components/modals/SyncModal";
+import ReceivedSyncs from "../components/feed/ReceivedSyncs";
+import { useCookies } from "react-cookie";
 
 const Feed = () => {
   const [syncing, setSyncing] = useState(false);
   const [syncingWith, setSyncingWith] = useState("");
+  const [cookie] = useCookies(["token"]);
   const createAlert = (title, variant) => {
     if (variant === "success") {
       return toast.success(title);
@@ -50,8 +53,17 @@ const Feed = () => {
               turnOnSyncModal={turnOnSyncModal}
             />
           </div>
-          <div className="hidden lg:flex flex-col text-center items-center sticky top-0 w-1/3">
-            <h1 className="text-4xl font-bold text-secondary">Syncs</h1>
+          <div className="hidden lg:flex flex-col text-center items-center sticky top-0 h-fit w-1/3">
+            <h2 className="text-2xl mt-8 font-semibold font-Roboto text-secondary">
+              Received Syncs
+            </h2>
+            {cookie.token ? (
+              <ReceivedSyncs />
+            ) : (
+              <p className="text-lg mt-2 font-Noto text-secondary">
+                Sign in to see syncs
+              </p>
+            )}
           </div>
         </div>
       </div>

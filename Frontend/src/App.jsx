@@ -96,8 +96,8 @@ const App = () => {
           <Route path="/profile/:username" element={<Profile />} />
         </Routes>
       </main>
-      <footer>
-        <div className="p-4 mt-4 relative inset-x-0 bottom-0 h-fit border-t border-zinc-700 items-center justify-center text-center">
+      <footer className="sticky bottom-0 bg-background">
+        <div className="p-4 mt-4 relative bottom-0 inset-x-0 h-fit border-t border-zinc-700 items-center justify-center text-center">
           <div className="w-full items-center flex flex-col">
             <p className="text-gray-400 pb-2">Created by Omar Alzoubi</p>
           </div>

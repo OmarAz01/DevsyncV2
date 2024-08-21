@@ -6,6 +6,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/sync")
@@ -15,6 +17,11 @@ public class SyncController {
     @PostMapping()
     public ResponseEntity<SyncDTO> sync(@RequestBody SyncDTO newSync) {
         return syncService.createSync(newSync);
+    }
+
+    @GetMapping("/received")
+    public ResponseEntity<List<SyncDTO>> getSyncs() {
+        return syncService.getSyncs();
     }
 
 }

@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -59,22 +60,31 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public ResponseEntity<List<PostDTO>> getAllPosts() {
+    public ResponseEntity<List<PostDTO>> getNewPosts(String lastPostDate) {
         List<PostEntity> posts;
-        List<PostDTO> allPostDTOs = new ArrayList<>();
+        List<PostDTO> newPostDTOs = new ArrayList<>();
+        LocalDateTime lastPostDateFormatted;
+        System.out.println(lastPostDate);
+        if (lastPostDate == null) {
+            lastPostDateFormatted = LocalDateTime.now(ZoneOffset.UTC);
+        }
+        else {
+            lastPostDateFormatted = LocalDateTime.parse(lastPostDate, DateTimeFormatter.ISO_DATE_TIME);
+        }
+        System.out.println(lastPostDateFormatted);
         try {
-            posts = postRepo.findAll();
-            if (posts.isEmpty()) {
+            posts = postRepo.getPostsBefore(lastPostDateFormatted);
+            for (PostEntity post : posts) {
+                newPostDTOs.add(PostDTO.convertToDTO(post));
+            }
+            if (newPostDTOs.isEmpty()) {
                 return ResponseEntity.status(404).body(null);
             }
+            return ResponseEntity.status(200).body(newPostDTOs);
         }
         catch (Exception e) {
-            e.printStackTrace();
             return ResponseEntity.status(500).body(null);
         }
-        for (PostEntity post : posts) {
-            allPostDTOs.add(PostDTO.convertToDTO(post));
-        }
-        return ResponseEntity.status(200).body(allPostDTOs);
     }
+
 }

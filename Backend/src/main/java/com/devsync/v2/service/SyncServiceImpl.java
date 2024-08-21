@@ -58,6 +58,29 @@ public class SyncServiceImpl implements SyncService{
     }
 
     @Override
+    public ResponseEntity<List<SyncDTO>> getSyncs() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Object principal = authentication.getPrincipal();
+        if (principal instanceof UserEntity) {
+            UserEntity user = (UserEntity) principal;
+            List<SyncDTO> receivedSyncs = new ArrayList<>();
+            try {
+                for (SyncEntity sync : syncRepo.findByRecipient(user)) {
+                    receivedSyncs.add(SyncDTO.convertToDTO(sync));
+                }
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+                return ResponseEntity.status(500).body(null);
+            }
+            return ResponseEntity.ok(receivedSyncs);
+        }
+        else {
+            return ResponseEntity.status(403).body(null);
+        }
+    }
+
+    @Override
     @Transactional
     public ResponseEntity<SyncDTO> createSync(SyncDTO newSync) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

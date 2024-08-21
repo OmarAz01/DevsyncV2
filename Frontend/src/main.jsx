@@ -5,9 +5,9 @@ import { CookiesProvider } from "react-cookie";
 import "./index.css";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
-  <React.StrictMode>
-    <CookiesProvider>
-      <App />
-    </CookiesProvider>
-  </React.StrictMode>
+  // <React.StrictMode>
+  <CookiesProvider>
+    <App />
+  </CookiesProvider>
+  // </React.StrictMode>
 );

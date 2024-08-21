@@ -19,7 +19,7 @@ public class PostController {
     }
 
     @GetMapping
-    public ResponseEntity<List<PostDTO>> getAll() {
-        return postService.getAllPosts();
+    public ResponseEntity<List<PostDTO>> getNewPosts(@RequestParam(value = "lastPostDate", required = false) String lastPostDate) {
+        return postService.getNewPosts(lastPostDate);
     }
 }

@@ -47,8 +47,8 @@ const CreatePost = ({ createAlert }) => {
       createAlert("Description contains profanity", "error");
       return;
     }
-    if (skillsArray.length > 5) {
-      createAlert("You can only add up to 5 skills", "error");
+    if (skillsArray.length > 3) {
+      createAlert("You can only add up to 3 skills", "error");
       return;
     }
     for (const skill of skillsArray) {
@@ -95,7 +95,7 @@ const CreatePost = ({ createAlert }) => {
   return (
     <div className="border rounded-2xl border-neutral-500 bg-neutral-900 w-full max-w-[700px] p-2 md:p-4">
       <div className="flex items-center justify-between my-1 md:mt-1 md:mb-1 px-1">
-        <h1 className="sm:text-2xl text-xl font-semibold text-secondary">
+        <h1 className="sm:text-2xl text-xl font-semibold font-Roboto text-secondary">
           Create Post
         </h1>
         <button
