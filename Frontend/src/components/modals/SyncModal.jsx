@@ -1,6 +1,11 @@
 import React, { useState } from "react";
 import { useCookies } from "react-cookie";
 import axios from "axios";
+import {
+  RegExpMatcher,
+  englishDataset,
+  englishRecommendedTransformers,
+} from "obscenity";
 
 const SyncModal = ({ syncingWith, turnOffSyncModal, createAlert }) => {
   const BASE_URL = import.meta.env.VITE_BASE_URL;
@@ -15,6 +20,14 @@ const SyncModal = ({ syncingWith, turnOffSyncModal, createAlert }) => {
     }
     if (message === "") {
       createAlert("Message cannot be empty", "error");
+      return;
+    }
+    const profanityMatcher = new RegExpMatcher({
+      ...englishDataset.build(),
+      ...englishRecommendedTransformers,
+    });
+    if (profanityMatcher.hasMatch(message)) {
+      createAlert("Message contains profanity", "error");
       return;
     }
     axios

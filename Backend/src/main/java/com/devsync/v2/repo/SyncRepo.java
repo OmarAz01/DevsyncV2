@@ -11,10 +11,12 @@ import java.util.List;
 @Repository
 public interface SyncRepo extends JpaRepository<SyncEntity, Long> {
 
-    @Query("SELECT s FROM SyncEntity s WHERE s.sender = ?1")
+    @Query("SELECT s FROM SyncEntity s WHERE s.sender = ?1 ORDER BY s.dateOfSync DESC")
     List<SyncEntity> findBySender(UserEntity sender);
 
-    @Query("SELECT s FROM SyncEntity s WHERE s.recipient = ?1")
+    @Query("SELECT s FROM SyncEntity s WHERE s.recipient = ?1 AND s.status = 'Pending' ORDER BY s.dateOfSync DESC")
     List<SyncEntity> findByRecipient(UserEntity recipient);
+
+
 
 }

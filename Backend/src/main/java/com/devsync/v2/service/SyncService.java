@@ -12,4 +12,5 @@ public interface SyncService {
     ResponseEntity<SyncDTO> createSync(SyncDTO newSync);
     void deleteSync(Long id);
     ResponseEntity<List<SyncDTO>> getSyncs();
+    ResponseEntity<Void> updateSync(Long id, SyncDTO responseSync);
 }

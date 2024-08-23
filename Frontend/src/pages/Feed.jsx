@@ -53,15 +53,15 @@ const Feed = () => {
               turnOnSyncModal={turnOnSyncModal}
             />
           </div>
-          <div className="hidden lg:flex flex-col text-center items-center sticky top-0 h-fit w-1/3">
+          <div className="hidden lg:flex flex-col text-center items-center h-fit w-1/3">
             <h2 className="text-2xl mt-8 font-semibold font-Roboto text-secondary">
               Received Syncs
             </h2>
             {cookie.token ? (
-              <ReceivedSyncs />
+              <ReceivedSyncs createAlert={createAlert} />
             ) : (
-              <p className="text-lg mt-2 font-Noto text-secondary">
-                Sign in to see syncs
+              <p className="text-lg mt-8 font-Noto text-primary italic">
+                Sign in to see your syncs
               </p>
             )}
           </div>

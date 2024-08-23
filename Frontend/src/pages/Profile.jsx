@@ -37,6 +37,10 @@ const Profile = () => {
     const username = location.pathname.split("/")[2];
     if (username) {
       if (username === "myprofile") {
+        if (!cookie.token) {
+          window.location.href = "/signin";
+          return;
+        }
         setCurrUserProfile(true);
         const token = cookie.token;
         const headers = {

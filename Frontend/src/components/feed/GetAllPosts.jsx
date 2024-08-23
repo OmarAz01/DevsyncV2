@@ -22,6 +22,9 @@ const GetAllPosts = ({ createAlert, turnOnSyncModal }) => {
     axios
       .get(url)
       .then((response) => {
+        if (response.data.length < 10) {
+          setLastPost(true);
+        }
         formatPosts(response.data);
         setLoading(false);
         setLastPostDate(response.data[response.data.length - 1].createdAt);

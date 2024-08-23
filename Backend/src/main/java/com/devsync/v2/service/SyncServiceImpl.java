@@ -81,6 +81,52 @@ public class SyncServiceImpl implements SyncService{
     }
 
     @Override
+    public ResponseEntity<Void> updateSync(Long id, SyncDTO responseSync) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Object principal = authentication.getPrincipal();
+        if (principal instanceof UserEntity) {
+            UserEntity user = (UserEntity) principal;
+            System.out.println(responseSync);
+            try {
+                Optional<SyncEntity> syncEntity = syncRepo.findById(id);
+                if (syncEntity.isEmpty()) {
+                    return ResponseEntity.status(404).body(null);
+                }
+                if (syncEntity.get().getRecipient().getUserId() != user.getUserId()) {
+                    return ResponseEntity.status(403).body(null);
+                }
+                if (responseSync.getStatus().equals("Accepted")) {
+                    // Create a new SyncEntity as a response to the original SyncEntity
+                    SyncEntity responseToSync = new SyncEntity();
+                    responseToSync.setSender(syncEntity.get().getRecipient());
+                    responseToSync.setRecipient(syncEntity.get().getSender());
+                    responseToSync.setDateOfSync(LocalDateTime.now(ZoneOffset.UTC));
+                    responseToSync.setMessage(responseSync.getMessage());
+                    responseToSync.setStatus("Response");
+                    syncEntity.get().setStatus("Accepted");
+                    syncRepo.save(responseToSync);
+                    syncRepo.save(syncEntity.get());
+                }
+                else if (responseSync.getStatus().equals("Rejected")) {
+                    syncEntity.get().setStatus("Rejected");
+                    syncRepo.save(syncEntity.get());
+                }
+                else {
+                    return ResponseEntity.status(400).body(null);
+                }
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+                return ResponseEntity.status(500).body(null);
+            }
+            return ResponseEntity.ok().build();
+        }
+        else {
+            return ResponseEntity.status(403).body(null);
+        }
+    }
+
+    @Override
     @Transactional
     public ResponseEntity<SyncDTO> createSync(SyncDTO newSync) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -100,7 +146,7 @@ public class SyncServiceImpl implements SyncService{
                 LocalDateTime now = LocalDateTime.now(ZoneOffset.UTC);
                 syncEntity.setDateOfSync(now);
                 syncEntity.setMessage(newSync.getMessage());
-                syncEntity.setStatus("pending");
+                syncEntity.setStatus("Pending");
                 syncRepo.save(syncEntity);
                 return ResponseEntity.status(201).body(SyncDTO.convertToDTO(syncEntity));
             }

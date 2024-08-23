@@ -24,4 +24,10 @@ public class SyncController {
         return syncService.getSyncs();
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<Void> updateSync(@PathVariable Long id, @RequestBody SyncDTO responseSync) {
+        return syncService.updateSync(id, responseSync);
+    }
+
+
 }

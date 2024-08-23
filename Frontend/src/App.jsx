@@ -56,7 +56,7 @@ const App = () => {
     <BrowserRouter>
       <header className="flex flex-row justify-end md:text-lg">
         <Link to="/">
-          <h4 className="p-4 absolute left-0 text-primary hover:cursor-pointer hover:font-bold font-Roboto text-xl sm:text-2xl">
+          <h4 className="p-4 absolute left-0 text-primary hover:cursor-pointer hover:font-bold font-Roboto text-lg sm:text-xl">
             {" "}
             devsync{" "}
           </h4>
@@ -64,13 +64,13 @@ const App = () => {
         {loggedIn ? (
           <>
             <Link to={`/profile/myprofile`}>
-              <h4 className="p-4 text-primary hover:cursor-pointer hover:font-bold font-Roboto text-xl sm:text-2xl">
+              <h4 className="p-4 text-primary hover:cursor-pointer hover:font-bold font-Roboto text-lg sm:text-xl">
                 {" "}
                 Profile
               </h4>
             </Link>
             <h4
-              className="p-4 text-primary hover:cursor-pointer hover:font-bold font-Roboto text-xl sm:text-2xl"
+              className="p-4 text-primary hover:cursor-pointer hover:font-bold font-Roboto text-lg sm:text-xl"
               onClick={() => signOut()}
             >
               {" "}
@@ -80,7 +80,7 @@ const App = () => {
         ) : (
           <>
             <Link to="/signin">
-              <h4 className="p-4 text-primary hover:cursor-pointer hover:font-bold font-Roboto text-xl sm:text-2xl">
+              <h4 className="p-4 text-primary hover:cursor-pointer hover:font-bold font-Roboto text-lg sm:text-xl">
                 {" "}
                 Sign In
               </h4>
