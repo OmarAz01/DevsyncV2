@@ -24,4 +24,5 @@ public interface UserRepo extends JpaRepository<UserEntity, Long> {
     @Query(value = "delete from users where user_id = :userId", nativeQuery = true)
     void deleteById(@Param("userId") Long userId);
 
+
 }

@@ -9,7 +9,7 @@ import {
 
 const SyncModal = ({ syncingWith, turnOffSyncModal, createAlert }) => {
   const BASE_URL = import.meta.env.VITE_BASE_URL;
-  const [cookie] = useCookies(["token"]);
+  const [cookie] = useCookies(["token", "username"]);
   const [message, setMessage] = useState("");
 
   const handleSync = () => {
@@ -20,6 +20,11 @@ const SyncModal = ({ syncingWith, turnOffSyncModal, createAlert }) => {
     }
     if (message === "") {
       createAlert("Message cannot be empty", "error");
+      return;
+    }
+    if (cookie.username === syncingWith) {
+      createAlert("You cannot sync with yourself", "error");
+      turnOffSyncModal();
       return;
     }
     const profanityMatcher = new RegExpMatcher({

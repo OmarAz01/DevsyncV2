@@ -13,4 +13,6 @@ public interface ProfileDetailsService {
 
     ResponseEntity<Long> deleteProfileDetails(String username, ProfileDetailsDTO profileDetailsDTO);
 
+
+
 }

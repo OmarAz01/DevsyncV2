@@ -15,12 +15,12 @@ const SkillSection = ({ userDetails, createAlert, currUserProfile }) => {
 
   return (
     <>
-      <div className="flex flex-row items-center justify-center relative text-center mb-2">
+      <div className="flex flex-row items-center justify-center relative text-center lg:mt-8 mt-6 mb-2">
         <h2 className="text-secondary text-xl px-8 sm:text-2xl border-b border-neutral-700 pb-1 font-Roboto font-medium">
           Skills
         </h2>
       </div>
-      <div className="flex flex-wrap justify-center items-center pb-8 pt-2">
+      <div className="flex flex-wrap justify-center items-center pt-1">
         {skills &&
           skills.map((skill, index) => (
             <div

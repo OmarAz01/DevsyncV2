@@ -20,8 +20,8 @@ public class SyncController {
     }
 
     @GetMapping("/received")
-    public ResponseEntity<List<SyncDTO>> getSyncs() {
-        return syncService.getSyncs();
+    public ResponseEntity<List<SyncDTO>> getReceivedSyncs() {
+        return syncService.getReceivedSyncs();
     }
 
     @PutMapping("/{id}")

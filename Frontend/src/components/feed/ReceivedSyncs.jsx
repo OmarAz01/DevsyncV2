@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useCookies } from "react-cookie";
 import axios from "axios";
 import { formatDistanceToNow, parseISO, set } from "date-fns";
@@ -7,21 +7,34 @@ import {
   englishDataset,
   englishRecommendedTransformers,
 } from "obscenity";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import RemoveCircleIcon from "@mui/icons-material/RemoveCircle";
+import RefreshIcon from "@mui/icons-material/Refresh";
 
 const ReceivedSyncs = ({ createAlert }) => {
   const BASE_URL = import.meta.env.VITE_BASE_URL;
   const [cookie] = useCookies(["token"]);
   const [syncs, setSyncs] = useState([]);
+  const [filterSyncsBy, setFilterSyncsBy] = useState("");
+  const [clickCount, setClickCount] = useState(0);
+  const [lastResetTime, setLastResetTime] = useState(Date.now());
   const [syncResponseModal, setSyncResponseModal] = useState({
     open: false,
     syncId: "",
     status: "",
   });
   const [syncResponse, setSyncResponse] = useState("");
+  const handleFilterChange = (e) => {
+    if (e.target.value === "All") {
+      setFilterSyncsBy("");
+    } else {
+      setFilterSyncsBy(e.target.value);
+    }
+  };
 
-  useEffect(() => {
-    getSyncs();
-  }, []);
+  const filteredSyncs = syncs.filter(
+    (sync) => filterSyncsBy === "" || sync.status === filterSyncsBy
+  );
 
   const getSyncs = () => {
     axios
@@ -38,6 +51,7 @@ const ReceivedSyncs = ({ createAlert }) => {
             dateOfSync: formatDistanceToNow(parseISO(formattedTime), {
               addSuffix: true,
             }),
+            status: sync.status.toLowerCase(),
           };
         });
         setSyncs(formattedSyncs);
@@ -47,6 +61,41 @@ const ReceivedSyncs = ({ createAlert }) => {
         console.log(error);
       });
   };
+
+  useEffect(() => {
+    getSyncs();
+  }, []);
+
+  const refreshSyncs = useCallback(() => {
+    const currentTime = Date.now();
+    const timeElapsed = currentTime - lastResetTime;
+
+    if (clickCount < 3) {
+      getSyncs();
+      setClickCount((prevCount) => prevCount + 1);
+    } else if (timeElapsed >= 60000) {
+      // 60000 ms = 1 minute
+      getSyncs();
+      setClickCount(1);
+      setLastResetTime(currentTime);
+    } else {
+      createAlert(
+        `Too many requests, Plaese wait before refreshing again`,
+        "warning"
+      );
+    }
+  }, [clickCount, lastResetTime, getSyncs, createAlert]);
+
+  useEffect(() => {
+    const resetInterval = setInterval(() => {
+      if (Date.now() - lastResetTime >= 60000) {
+        setClickCount(0);
+        setLastResetTime(Date.now());
+      }
+    }, 60000);
+
+    return () => clearInterval(resetInterval);
+  }, [lastResetTime]);
 
   const openSyncResponseModal = (syncId, status) => {
     setSyncResponseModal({
@@ -115,45 +164,80 @@ const ReceivedSyncs = ({ createAlert }) => {
   };
 
   return (
-    <div className="flex flex-col items-center w-full px-2 pt-2 mt-6">
-      {syncs.length > 0 ? (
-        syncs.map((sync) => (
+    <div className="flex flex-col items-center w-full px-2 pt-2 mt-2">
+      <div className="flex justify-between mb-4 w-full px-4 border-b border-neutral-500 pb-4">
+        <select
+          id="statusFilter"
+          value={filterSyncsBy}
+          onChange={handleFilterChange}
+          className="px-2 py-1 rounded-lg border border-neutral-500 bg-background text-secondary"
+        >
+          <option value="All">All</option>
+          <option value="pending">Requests</option>
+          <option value="response">Responses</option>
+        </select>
+        <div className="py-1">
+          <button
+            onClick={(e) => refreshSyncs()}
+            className="text-sm text-black font-Roboto font-bold w-fit bg-primary h-fit p-1 rounded-lg hover:scale-105 hover:brightness-110"
+          >
+            <RefreshIcon />
+          </button>
+        </div>
+      </div>
+
+      {filteredSyncs.length > 0 ? (
+        filteredSyncs.map((sync) => (
           <div
             key={sync.syncId}
             className="border-b border-neutral-500 mb-4 w-full max-w-[700px] px-4 pt-2 pb-2"
           >
             <div className="flex justify-between">
-              <div className="flex">
+              <div className="flex flex-wrap text-start pr-2">
                 <a
                   href={`${window.location.origin}/profile/${sync.senderUsername}`}
-                  className="text-base font-Roboto font-bold text-primary hover:underline"
+                  className="text-base font-Roboto mr-1.5 font-bold text-primary hover:underline"
                 >
                   {sync.senderUsername}
                 </a>
-                <p className="text-base font-Roboto text-secondary ml-2">
-                  wants to sync
+                <p
+                  className={`text-base font-Roboto ${
+                    sync.status === "pending"
+                      ? "text-secondary"
+                      : "text-green-500"
+                  }`}
+                >
+                  {sync.status === "pending"
+                    ? "requested to sync"
+                    : "accepted your sync"}
                 </p>
               </div>
-              <div className="flex">
-                <button
-                  onClick={(e) => openSyncResponseModal(sync.syncId, "Accept")}
-                  className="text-sm text-black font-Roboto font-bold bg-primary px-4 py-1 rounded-lg hover:scale-105 hover:brightness-110"
-                >
-                  Accept
-                </button>
-                <button
-                  onClick={(e) => openSyncResponseModal(sync.syncId, "Reject")}
-                  className="text-sm text-black font-Roboto font-bold bg-red-500 px-4 py-1 rounded-lg hover:scale-105 hover:brightness-110 ml-2"
-                >
-                  Reject
-                </button>
-              </div>
+              {sync.status === "pending" && (
+                <div className="flex">
+                  <button
+                    onClick={(e) =>
+                      openSyncResponseModal(sync.syncId, "Accept")
+                    }
+                    className="text-sm text-black font-Roboto font-bold w-fit bg-green-500 h-fit px-1 py-0.5 rounded-lg hover:scale-105 hover:brightness-110"
+                  >
+                    <CheckCircleIcon />
+                  </button>
+                  <button
+                    onClick={(e) =>
+                      openSyncResponseModal(sync.syncId, "Reject")
+                    }
+                    className="text-sm text-black font-Roboto font-bold bg-red-500 w-fit h-fit px-1 py-0.5 rounded-lg hover:scale-105 hover:brightness-110 ml-2"
+                  >
+                    <RemoveCircleIcon />
+                  </button>
+                </div>
+              )}
             </div>
             <p className="mb-2 mt-2 text-start  font-Noto text-sm text-secondary break-words">
               {sync.message}
             </p>
             <p className="text-sm w-full text-end text-neutral-500 italic">
-              Sent {sync.dateOfSync}
+              Received {sync.dateOfSync}
             </p>
           </div>
         ))

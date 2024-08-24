@@ -3,14 +3,15 @@ import CreatePost from "../components/feed/CreatePost";
 import GetAllPosts from "../components/feed/GetAllPosts";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import SyncModal from "../components/modals/SyncModal";
 import ReceivedSyncs from "../components/feed/ReceivedSyncs";
 import { useCookies } from "react-cookie";
+import SyncModal from "../components/modals/SyncModal";
 
 const Feed = () => {
+  const [cookie] = useCookies(["token"]);
   const [syncing, setSyncing] = useState(false);
   const [syncingWith, setSyncingWith] = useState("");
-  const [cookie] = useCookies(["token"]);
+
   const createAlert = (title, variant) => {
     if (variant === "success") {
       return toast.success(title);
@@ -18,6 +19,7 @@ const Feed = () => {
       return toast.error(title);
     }
   };
+
   const turnOnSyncModal = (username) => {
     setSyncing(true);
     setSyncingWith(username);
@@ -45,24 +47,27 @@ const Feed = () => {
           syncing ? "overflow-hidden pointer-events-none" : ""
         }`}
       >
-        <div className="flex flex-row max-w-screen-2xl w-full p-4">
-          <div className="flex flex-col items-center justify-center p-2 sm:p-4 lg:border-r border-neutral-500 w-full lg:w-2/3">
+        <div className="flex flex-row max-w-screen-xl w-full p-4 ">
+          <div className="flex flex-col lg:items-start items-center justify-center p-2 sm:p-4 lg:border-r border-neutral-500 w-full lg:w-8/12">
             <CreatePost createAlert={createAlert} />
             <GetAllPosts
               createAlert={createAlert}
               turnOnSyncModal={turnOnSyncModal}
             />
           </div>
-          <div className="hidden lg:flex flex-col text-center items-center h-fit w-1/3">
+          <div className="hidden lg:flex flex-col text-center items-center h-fit w-4/12">
             <h2 className="text-2xl mt-8 font-semibold font-Roboto text-secondary">
               Received Syncs
             </h2>
             {cookie.token ? (
               <ReceivedSyncs createAlert={createAlert} />
             ) : (
-              <p className="text-lg mt-8 font-Noto text-primary italic">
+              <a
+                href="/signin"
+                className="text-lg mt-8 font-Noto text-primary italic hover:underline"
+              >
                 Sign in to see your syncs
-              </p>
+              </a>
             )}
           </div>
         </div>

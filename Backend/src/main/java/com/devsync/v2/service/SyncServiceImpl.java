@@ -58,7 +58,7 @@ public class SyncServiceImpl implements SyncService{
     }
 
     @Override
-    public ResponseEntity<List<SyncDTO>> getSyncs() {
+    public ResponseEntity<List<SyncDTO>> getReceivedSyncs() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Object principal = authentication.getPrincipal();
         if (principal instanceof UserEntity) {
@@ -134,6 +134,9 @@ public class SyncServiceImpl implements SyncService{
         if (principal instanceof UserEntity) {
             UserEntity sender = (UserEntity) principal;
             sender = entityManager.merge(sender);
+            if (newSync.getRecipientUsername().equals(sender.getUsername())) {
+                return ResponseEntity.status(400).body(null);
+            }
             try {
                 Optional<UserEntity> recipient;
                 recipient = userRepo.findByUsername(newSync.getRecipientUsername());

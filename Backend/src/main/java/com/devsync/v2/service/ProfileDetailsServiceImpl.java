@@ -1,6 +1,8 @@
 package com.devsync.v2.service;
 
+import com.devsync.v2.dto.PostDTO;
 import com.devsync.v2.dto.ProfileDetailsDTO;
+import com.devsync.v2.entity.PostEntity;
 import com.devsync.v2.entity.ProfileDetailsEntity;
 import com.devsync.v2.entity.UserEntity;
 import com.devsync.v2.repo.ProfileDetailsRepo;
@@ -10,7 +12,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -18,6 +22,7 @@ import java.util.Optional;
 public class ProfileDetailsServiceImpl implements ProfileDetailsService {
     private final ProfileDetailsRepo profileDetailsRepo;
     private final UserRepo userRepo;
+
     @Override
     public ResponseEntity<ProfileDetailsDTO> findByUsername(String username) {
 
@@ -27,18 +32,31 @@ public class ProfileDetailsServiceImpl implements ProfileDetailsService {
             Object principal = authentication.getPrincipal();
             if (principal instanceof UserEntity) {
                 UserEntity user = (UserEntity) principal;
-                ProfileDetailsEntity profileDetails = user.getProfileDetails();
-                return ResponseEntity.status(200).body(ProfileDetailsDTO.convertToDTO(profileDetails));
+                user = userRepo.findByUsername(user.getUsername()).get();
+                return ResponseEntity.ok(createProfileDetailsDTO(user));
             }
             return ResponseEntity.status(403).body(null);
         }
 
-        Optional<UserEntity> user = userRepo.findByUsername(username);
-        if (user.isEmpty()) {
+        Optional<UserEntity> userOpt = userRepo.findByUsername(username);
+        if (userOpt.isEmpty()) {
             return ResponseEntity.status(404).body(null);
         }
-        ProfileDetailsDTO profileDetailsDTO = ProfileDetailsDTO.convertToDTO(user.get().getProfileDetails());
-        return ResponseEntity.status(200).body(profileDetailsDTO);
+        return ResponseEntity.ok(createProfileDetailsDTO(userOpt.get()));
+    }
+
+    private ProfileDetailsDTO createProfileDetailsDTO(UserEntity user) {
+        ProfileDetailsEntity profileDetails = user.getProfileDetails();
+        List<PostEntity> posts = user.getPosts();
+
+        return new ProfileDetailsDTO(
+                user.getUsername(),
+                profileDetails.getBio(),
+                profileDetails.getImageUri(),
+                profileDetails.getSkills(),
+                profileDetails.getUserLink(),
+                PostDTO.convertToDTOList(posts)
+        );
     }
 
     @Override

@@ -11,6 +11,6 @@ public interface SyncService {
     ResponseEntity<List<SyncDTO>> findByRecipient();
     ResponseEntity<SyncDTO> createSync(SyncDTO newSync);
     void deleteSync(Long id);
-    ResponseEntity<List<SyncDTO>> getSyncs();
+    ResponseEntity<List<SyncDTO>> getReceivedSyncs();
     ResponseEntity<Void> updateSync(Long id, SyncDTO responseSync);
 }

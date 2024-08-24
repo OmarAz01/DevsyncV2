@@ -5,6 +5,10 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -27,5 +31,13 @@ public class PostDTO {
                 post.getUser().getUsername(),
                 post.getUser().getProfileDetails().getImageUri()
         );
+    }
+
+    public static List<PostDTO> convertToDTOList(List<PostEntity> posts) {
+        List<PostDTO> postDTOs = new ArrayList<>();
+        for (PostEntity post : posts) {
+            postDTOs.add(convertToDTO(post));
+        }
+        return postDTOs;
     }
 }

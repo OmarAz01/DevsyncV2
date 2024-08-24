@@ -10,6 +10,8 @@ import {
   englishDataset,
   englishRecommendedTransformers,
 } from "obscenity";
+import ReceivedSyncs from "../components/feed/ReceivedSyncs";
+import DisplayPosts from "../components/posts/DisplayPosts";
 
 const Profile = () => {
   const BASE_URL = import.meta.env.VITE_BASE_URL;
@@ -165,7 +167,7 @@ const Profile = () => {
         }`}
       >
         <div className="flex lg:flex-row flex-col p-4 w-full max-w-screen-2xl justify-center lg:items-start items-center">
-          <div className="flex flex-col lg:left-0 w-full h-fit pb-4 pt-12 font-Roboto lg:px-6 items-center max-w-md">
+          <div className="flex flex-col lg:border-r border-neutral-500 lg:left-0 w-full h-fit pb-4 pt-2 font-Roboto lg:px-6 items-center max-w-md">
             <BioSection
               userDetails={userDetails}
               createAlert={createAlert}
@@ -173,18 +175,16 @@ const Profile = () => {
               handleUserDetailsChange={handleUserDetailsChange}
               changeEditProfile={changeEditProfile}
             />
+            <SkillSection
+              userDetails={userDetails}
+              createAlert={createAlert}
+              currUserProfile={currUserProfile}
+              handleUserDetailsChange={handleUserDetailsChange}
+            />
           </div>
-          <div className="sm:max-w-[650px] flex flex-col lg:ml-4 xl:ml-16">
-            <div className="flex flex-col h-fit mt-8 lg:mt-12 pb-4 sm:mt-102 items-center font-Roboto border-neutral-700 border-b w-full">
-              <SkillSection
-                userDetails={userDetails}
-                createAlert={createAlert}
-                currUserProfile={currUserProfile}
-                handleUserDetailsChange={handleUserDetailsChange}
-              />
-            </div>
+          <div className="sm:max-w-[650px] w-full flex flex-col lg:ml-4 xl:ml-16">
             {currUserProfile ? (
-              <div className="flex flex-row justify-center text-center font-Roboto items-center mt-6 space-x-2">
+              <div className="flex flex-row w-full justify-center text-center font-Roboto items-center mt-4 space-x-2">
                 <button
                   onClick={() => setCurrentView("Posts")}
                   className={`${
@@ -223,27 +223,43 @@ const Profile = () => {
                 </button>
               </div>
             ) : (
-              <>
+              <div className="w-full">
                 <h4 className="text-center mt-6 text-secondary text-xl sm:text-2xl font-Roboto font-medium">
                   Posts
                 </h4>
-                <p className="text-secondary text-lg font-Roboto mt-4">
-                  Not curr user posts
-                </p>
-              </>
+                {userDetails.posts && userDetails.posts.length > 0 ? (
+                  <div className="flex w-full items-center justify-center">
+                    <DisplayPosts
+                      rawPosts={userDetails.posts}
+                      turnOnSyncModal={null}
+                    />
+                  </div>
+                ) : (
+                  <p className="text-secondary text-lg font-Roboto mt-4">
+                    No posts yet
+                  </p>
+                )}
+              </div>
             )}
             {currUserProfile && currentView === "Posts" && (
-              <div className="flex flex-col items-center justify-center mt-4">
-                <p className="text-secondary text-lg font-Roboto mt-4">
-                  Current user's posts
-                </p>
+              <div className="flex flex-col w-full items-center justify-center mt-4">
+                {userDetails.posts && userDetails.posts.length > 0 ? (
+                  <div className="w-full flex items-center justify-center">
+                    <DisplayPosts
+                      rawPosts={userDetails.posts}
+                      turnOnSyncModal={null}
+                    />
+                  </div>
+                ) : (
+                  <p className="text-secondary text-lg font-Roboto mt-4">
+                    No posts yet
+                  </p>
+                )}
               </div>
             )}
             {currUserProfile && currentView === "Syncs" && (
               <div className="flex flex-col items-center justify-center mt-4">
-                <p className="text-secondary text-lg font-Roboto mt-4">
-                  No syncs yet
-                </p>
+                <ReceivedSyncs createAlert={createAlert} />
               </div>
             )}
             {currUserProfile && currentView === "Settings" && (
