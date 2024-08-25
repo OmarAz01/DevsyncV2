@@ -7,6 +7,8 @@ import com.devsync.v2.entity.ProfileDetailsEntity;
 import com.devsync.v2.entity.UserEntity;
 import com.devsync.v2.repo.ProfileDetailsRepo;
 import com.devsync.v2.repo.UserRepo;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -14,6 +16,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,6 +25,8 @@ import java.util.Optional;
 public class ProfileDetailsServiceImpl implements ProfileDetailsService {
     private final ProfileDetailsRepo profileDetailsRepo;
     private final UserRepo userRepo;
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @Override
     public ResponseEntity<ProfileDetailsDTO> findByUsername(String username) {
@@ -48,11 +53,11 @@ public class ProfileDetailsServiceImpl implements ProfileDetailsService {
     private ProfileDetailsDTO createProfileDetailsDTO(UserEntity user) {
         ProfileDetailsEntity profileDetails = user.getProfileDetails();
         List<PostEntity> posts = user.getPosts();
+        posts.sort(Comparator.comparing(PostEntity::getCreatedAt).reversed());
 
         return new ProfileDetailsDTO(
                 user.getUsername(),
                 profileDetails.getBio(),
-                profileDetails.getImageUri(),
                 profileDetails.getSkills(),
                 profileDetails.getUserLink(),
                 PostDTO.convertToDTOList(posts)
@@ -69,21 +74,27 @@ public class ProfileDetailsServiceImpl implements ProfileDetailsService {
         }
     }
 
+    @Transactional
     @Override
     public ResponseEntity<ProfileDetailsDTO> updateProfileDetails(String username, ProfileDetailsDTO updatedProfile) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Object principal = authentication.getPrincipal();
         if (principal instanceof UserEntity) {
             UserEntity user = (UserEntity) principal;
+            user = entityManager.merge(user);
             ProfileDetailsEntity updatedProfileDetails = user.getProfileDetails();
             updatedProfileDetails.setBio(updatedProfile.getBio());
             updatedProfileDetails.setSkills(updatedProfile.getSkills());
-            updatedProfileDetails.setUserLink(updatedProfile.getUserLink());
+            if (updatedProfile.getUserLink() != null) {
+                updatedProfileDetails.setUserLink(updatedProfile.getUserLink());
+            }
+
             try {
                 profileDetailsRepo.save(updatedProfileDetails);
                 return ResponseEntity.status(200).body(ProfileDetailsDTO.convertToDTO(updatedProfileDetails));
             }
             catch (Exception e) {
+                System.out.println(e);
                 return ResponseEntity.status(500).body(null);
             }
         }

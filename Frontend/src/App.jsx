@@ -94,6 +94,7 @@ const App = () => {
           <Route path="/signup" element={<SignUp />} />
           <Route path="/signin" element={<SignIn />} />
           <Route path="/profile/:username" element={<Profile />} />
+          <Route path="/profile/myprofile" element={<Profile />} />
         </Routes>
       </main>
       <footer className="sticky bottom-0 bg-background">

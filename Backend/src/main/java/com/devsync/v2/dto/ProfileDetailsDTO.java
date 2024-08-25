@@ -13,7 +13,6 @@ import java.util.List;
 public class ProfileDetailsDTO {
     private String username;
     private String bio;
-    private String imageUri;
     private String skills;
     private String userLink;
     private List<PostDTO> posts;
@@ -22,7 +21,6 @@ public class ProfileDetailsDTO {
         return new ProfileDetailsDTO(
                 profileDetails.getUser().getUsername(),
                 profileDetails.getBio(),
-                profileDetails.getImageUri(),
                 profileDetails.getSkills(),
                 profileDetails.getUserLink(),
                 PostDTO.convertToDTOList(profileDetails.getUser().getPosts())

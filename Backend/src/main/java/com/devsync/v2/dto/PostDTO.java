@@ -19,7 +19,6 @@ public class PostDTO {
     private String skills;
     private String createdAt;
     private String username;
-    private String imageUri;
 
     public static PostDTO convertToDTO(PostEntity post) {
         return new PostDTO(
@@ -28,8 +27,7 @@ public class PostDTO {
                 post.getDescription(),
                 post.getSkills(),
                 post.getCreatedAt().toString(),
-                post.getUser().getUsername(),
-                post.getUser().getProfileDetails().getImageUri()
+                post.getUser().getUsername()
         );
     }
 

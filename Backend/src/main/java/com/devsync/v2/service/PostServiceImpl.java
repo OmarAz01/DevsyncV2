@@ -40,6 +40,16 @@ public class PostServiceImpl implements PostService {
         if (principal instanceof UserEntity) {
             UserEntity user = (UserEntity) principal;
             user = entityManager.merge(user);
+            // User can only create three posts every 14 days to prevent spam
+            // Check if the users third most recent post is older than 14 days
+            LocalDateTime nowMinus14Days = LocalDateTime.now(ZoneOffset.UTC).minusDays(14);
+            List<PostEntity> posts = user.getPosts();
+            if (posts.size() >= 3) {
+                posts.sort((p1, p2) -> p2.getCreatedAt().compareTo(p1.getCreatedAt()));
+                if (posts.get(2).getCreatedAt().isAfter(nowMinus14Days)) {
+                    return ResponseEntity.status(429).body(null);
+                }
+            }
             PostEntity postEntity = new PostEntity();
             postEntity.setUser(user);
             postEntity.setDescription(newPost.getDescription());

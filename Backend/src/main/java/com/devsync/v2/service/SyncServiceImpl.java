@@ -134,15 +134,39 @@ public class SyncServiceImpl implements SyncService{
         if (principal instanceof UserEntity) {
             UserEntity sender = (UserEntity) principal;
             sender = entityManager.merge(sender);
+
+            // Check if the sender is trying to sync with themselves
             if (newSync.getRecipientUsername().equals(sender.getUsername())) {
                 return ResponseEntity.status(400).body(null);
             }
+
             try {
-                Optional<UserEntity> recipient;
-                recipient = userRepo.findByUsername(newSync.getRecipientUsername());
+                Optional<UserEntity> recipient = userRepo.findByUsername(newSync.getRecipientUsername());
+
+                // Check if the recipient exists
                 if (recipient.isEmpty()) {
                     return ResponseEntity.status(404).body(null);
                 }
+
+                // Count the number of pending syncs for the recipient
+                long pendingSyncCount = recipient.get().getReceivedSyncs().stream()
+                        .filter(sync -> "Pending".equals(sync.getStatus()))
+                        .count();
+
+                // If the recipient has reached the limit, return a 429 (Too Many Requests) status
+                if (pendingSyncCount >= 10) {
+                    return ResponseEntity.status(429).body(null);
+                }
+                // If they have already sent a sync request to the recipient within the last 30 days, return a 409 (Conflict) status
+                for (SyncEntity sync : sender.getSentSyncs()) {
+                    if (sync.getRecipient().getUserId() == recipient.get().getUserId()) {
+                        if (sync.getDateOfSync().isAfter(LocalDateTime.now(ZoneOffset.UTC).minusDays(30))) {
+                            return ResponseEntity.status(409).body(null);
+                        }
+                    }
+                }
+
+                // Create and save the new sync
                 SyncEntity syncEntity = new SyncEntity();
                 syncEntity.setSender(sender);
                 syncEntity.setRecipient(recipient.get());
@@ -151,16 +175,19 @@ public class SyncServiceImpl implements SyncService{
                 syncEntity.setMessage(newSync.getMessage());
                 syncEntity.setStatus("Pending");
                 syncRepo.save(syncEntity);
+
+                // Return the created sync DTO with a 201 (Created) status
                 return ResponseEntity.status(201).body(SyncDTO.convertToDTO(syncEntity));
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 e.printStackTrace();
                 return ResponseEntity.status(500).body(null);
             }
-
         }
+
+        // If the user is not authenticated, return a 403 (Forbidden) status
         return ResponseEntity.status(403).body(null);
     }
+
 
     @Override
     public void deleteSync(Long id) {

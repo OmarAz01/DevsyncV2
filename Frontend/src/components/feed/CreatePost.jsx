@@ -87,13 +87,26 @@ const CreatePost = ({ createAlert }) => {
         }
       })
       .catch((error) => {
-        console.log(error);
-        createAlert("An error occurred while creating the post", "error");
+        if (error.response.status === 403) {
+          createAlert("You must be logged in to create a post", "error");
+        } else if (error.response.status === 400) {
+          createAlert("Invalid request", "error");
+        } else if (error.response.status === 500) {
+          createAlert("Internal server error", "error");
+        } else if (error.response.status === 429) {
+          createAlert(
+            "You have reached the post limit check back later",
+            "error"
+          );
+        } else {
+          console.log(error);
+          createAlert("An error occurred while creating the post", "error");
+        }
       });
   };
 
   return (
-    <div className="border rounded-2xl border-neutral-500 bg-neutral-900 w-full max-w-[700px] p-2 md:p-4">
+    <div className="border rounded-2xl border-neutral-500 bg-neutral-900 w-full max-w-[700px] pt-2 px-2 pb-2 md:px-4 md:pt-4">
       <div className="flex items-center justify-between my-1 md:mt-1 md:mb-1 px-1">
         <h1 className="sm:text-2xl text-xl font-semibold font-Roboto text-secondary">
           Create Post
@@ -138,9 +151,9 @@ const CreatePost = ({ createAlert }) => {
             maxLength={1000}
             rows={2}
           />
-          <div className="w-full pr-1">
+          <div className="w-full pr-1 mt-4">
             <button
-              className="bg-primary float-end text-black hover:scale-105 hover:brightness-110 ml-1 font-Roboto font-bold w-fit px-4 py-1 rounded-md my-3"
+              className="bg-primary float-end text-black hover:scale-105 hover:brightness-110 ml-1 font-Roboto font-bold w-fit px-4 py-1 rounded-lg "
               type="submit"
             >
               Post

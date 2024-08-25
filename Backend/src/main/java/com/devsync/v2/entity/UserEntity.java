@@ -48,6 +48,14 @@ public class UserEntity implements UserDetails {
     @ToString.Exclude
     private List<SyncEntity> receivedSyncs;
 
+    @OneToMany(mappedBy = "reportedBy", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ToString.Exclude
+    private List<ReportEntity> sentReports;
+
+    @OneToMany(mappedBy = "reportedUser", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ToString.Exclude
+    private List<ReportEntity> receivedReports;
+
     @Override
     public boolean isAccountNonExpired() {
         return true;

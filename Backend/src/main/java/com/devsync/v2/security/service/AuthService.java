@@ -38,15 +38,19 @@ public class AuthService {
 
 
     public ResponseEntity<AuthenticationResponse> register(RegisterRequest request) {
+        if (request.getUsername().length() >= 11 || request.getUsername().length() <= 3) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(AuthenticationResponse.builder()
+                    .error("Username must be less than 11 characters and greater than 3").build());
+        }
         if (userService.findByUsername(request.getUsername()).getBody() != null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(AuthenticationResponse.builder()
                     .error("Username already exists").build());
         }
-
         if (userService.findByEmail(request.getEmail()).getBody() != null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(AuthenticationResponse.builder()
                     .error("Email already exists").build());
         }
+
 
         // Creating a new user
         UserEntity user = new UserEntity();
@@ -56,11 +60,9 @@ public class AuthService {
         user.setUsername(request.getUsername());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
         user.setRole(Role.USER);
-        String imageUri = "https://api.dicebear.com/9.x/avataaars-neutral/svg?seed=" + request.getUsername() + "&backgroundColor=f8d25c";
         ProfileDetailsEntity profileDetails = new ProfileDetailsEntity();
-        profileDetails.setImageUri(imageUri);
         profileDetails.setSkills("Python, Java, C++");
-        profileDetails.setBio("This is " + request.getUsername() + "'s bio. Nothing to see here.");
+        profileDetails.setBio("This is " + request.getUsername() + "'s bio. Nothing here yet.");
         profileDetails.setUser(user);
 
 

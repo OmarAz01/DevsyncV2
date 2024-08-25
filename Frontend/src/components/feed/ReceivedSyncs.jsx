@@ -179,7 +179,7 @@ const ReceivedSyncs = ({ createAlert }) => {
         <div className="py-1">
           <button
             onClick={(e) => refreshSyncs()}
-            className="text-sm text-black font-Roboto font-bold w-fit bg-primary h-fit p-1 rounded-lg hover:scale-105 hover:brightness-110"
+            className="text-sm text-black font-Roboto font-bold w-fit bg-primary h-fit p-1 rounded-full hover:scale-105 hover:brightness-110"
           >
             <RefreshIcon />
           </button>
@@ -218,7 +218,7 @@ const ReceivedSyncs = ({ createAlert }) => {
                     onClick={(e) =>
                       openSyncResponseModal(sync.syncId, "Accept")
                     }
-                    className="text-sm text-black font-Roboto font-bold w-fit bg-green-500 h-fit px-1 py-0.5 rounded-lg hover:scale-105 hover:brightness-110"
+                    className="text-xs text-black font-Roboto font-bold w-fit bg-green-500 h-fit p-1 rounded-full hover:scale-105 hover:brightness-110"
                   >
                     <CheckCircleIcon />
                   </button>
@@ -226,7 +226,7 @@ const ReceivedSyncs = ({ createAlert }) => {
                     onClick={(e) =>
                       openSyncResponseModal(sync.syncId, "Reject")
                     }
-                    className="text-sm text-black font-Roboto font-bold bg-red-500 w-fit h-fit px-1 py-0.5 rounded-lg hover:scale-105 hover:brightness-110 ml-2"
+                    className="text-xs text-black font-Roboto font-bold bg-red-500 w-fit h-fit p-1 rounded-full hover:scale-105 hover:brightness-110 ml-2"
                   >
                     <RemoveCircleIcon />
                   </button>
@@ -270,7 +270,7 @@ const ReceivedSyncs = ({ createAlert }) => {
                     onClick={() => acceptSync(syncResponseModal.syncId)}
                     className="bg-green-500 hover:brightness-110 hover:scale-105 text-background font-Roboto font-bold text-lg py-1 w-20 rounded-md"
                   >
-                    Send
+                    Accept
                   </button>
                   <button
                     onClick={() => closeSyncResponseModal()}

@@ -148,6 +148,7 @@ export default function SignUp() {
                         name="firstName"
                         required
                         fullWidth
+                        inputProps={{ maxLength: 30 }}
                         id="firstName"
                         label="First Name"
                         autoFocus
@@ -157,6 +158,7 @@ export default function SignUp() {
                       <TextField
                         required
                         fullWidth
+                        inputProps={{ maxLength: 30 }}
                         id="lastName"
                         label="Last Name"
                         name="lastName"
@@ -167,6 +169,7 @@ export default function SignUp() {
                       <TextField
                         required
                         fullWidth
+                        inputProps={{ maxLength: 10 }}
                         id="username"
                         label="Username"
                         name="username"
@@ -178,6 +181,7 @@ export default function SignUp() {
                         required
                         fullWidth
                         id="email"
+                        inputProps={{ maxLength: 254 }}
                         label="Email Address"
                         type="email"
                         name="email"

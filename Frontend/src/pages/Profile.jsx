@@ -70,53 +70,19 @@ const Profile = () => {
           });
       }
     }
-  }, []);
-
-  const verifyProfileDetails = (userDetails) => {
-    const userLinkRegex =
-      /^https:\/\/([a-zA-Z0-9.-]+\.[a-zA-Z]{2,})(\/[^\s]*)?$/;
-    if (!userLinkRegex.test(userDetails.userLink)) {
-      createAlert("Invalid user link", "error");
-      return false;
-    }
-    const skills = userDetails.skills.split(", ");
-    if (skills.length < 3) {
-      createAlert(
-        "You must have atleast three skills seperated by a comma and a space",
-        "error"
-      );
-      return false;
-    }
-    // Profanity check
-    const profanityMatcher = new RegExpMatcher({
-      ...englishDataset.build(),
-      ...englishRecommendedTransformers,
-    });
-    if (profanityMatcher.hasMatch(userDetails.bio)) {
-      createAlert("Bio contains profanity", "error");
-      return false;
-    }
-    for (const s of skills) {
-      if (profanityMatcher.hasMatch(s)) {
-        createAlert("Skills contain profanity", "error");
-        return false;
-      }
-    }
-
-    return true;
-  };
+  }, [location.pathname]);
 
   const handleProfileUpdate = () => {
-    if (!updatedUserDetails.userLink) {
-      createAlert("User link cannot be empty", "error");
-      return;
-    }
     if (!updatedUserDetails.bio) {
       createAlert("Bio cannot be empty", "error");
       return;
     }
     if (!updatedUserDetails.skills) {
       createAlert("Skills cannot be empty", "error");
+      return;
+    }
+    if (updatedUserDetails === userDetails) {
+      setEditProfile(false);
       return;
     }
     if (!verifyProfileDetails(updatedUserDetails)) {
@@ -143,6 +109,38 @@ const Profile = () => {
         console.log(error);
         createAlert("Profile update failed", "error");
       });
+  };
+
+  const verifyProfileDetails = (userDetails) => {
+    const userLinkRegex =
+      /^https:\/\/([a-zA-Z0-9.-]+\.[a-zA-Z]{2,})(\/[^\s]*)?$/;
+    // Only check for valid user link if user has entered one
+    if (userDetails.userLink && !userLinkRegex.test(userDetails.userLink)) {
+      createAlert("Invalid user link", "error");
+      return false;
+    }
+    const skills = userDetails.skills.split(", ");
+    if (skills.length < 3) {
+      createAlert("Skills must be atleast 3 and separated by commas", "error");
+      return false;
+    }
+    // Profanity check
+    const profanityMatcher = new RegExpMatcher({
+      ...englishDataset.build(),
+      ...englishRecommendedTransformers,
+    });
+    if (profanityMatcher.hasMatch(userDetails.bio)) {
+      createAlert("Bio contains profanity", "error");
+      return false;
+    }
+    for (const s of skills) {
+      if (profanityMatcher.hasMatch(s)) {
+        createAlert("Skills contain profanity", "error");
+        return false;
+      }
+    }
+
+    return true;
   };
 
   const handleUserDetailsChange = (newUserDetails) => {
@@ -235,7 +233,7 @@ const Profile = () => {
                     />
                   </div>
                 ) : (
-                  <p className="text-secondary text-lg font-Roboto mt-4">
+                  <p className="text-secondary w-full text-center italic text-lg font-Roboto mt-4">
                     No posts yet
                   </p>
                 )}
@@ -251,7 +249,7 @@ const Profile = () => {
                     />
                   </div>
                 ) : (
-                  <p className="text-secondary text-lg font-Roboto mt-4">
+                  <p className="text-secondary italic w-full text-center text-lg font-Roboto mt-4">
                     No posts yet
                   </p>
                 )}
@@ -299,7 +297,8 @@ const Profile = () => {
                   </h2>
                   <h3 className="text-neutral-400 text-xs sm:text-sm font-Roboto ">
                     This link will be displayed on your profile header. Use it
-                    to show off a project or personal website.
+                    to show off a project, personal website, or your preferred
+                    social media.
                   </h3>
                   <input
                     type="text"

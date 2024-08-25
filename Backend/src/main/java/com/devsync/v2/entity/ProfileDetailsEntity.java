@@ -18,7 +18,6 @@ public class ProfileDetailsEntity {
     private UserEntity user;
     @Column(columnDefinition = "TEXT")
     private String bio;
-    private String imageUri;
     private String userLink;
     private String skills;
 }
