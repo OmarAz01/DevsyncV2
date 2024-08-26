@@ -1,6 +1,13 @@
 import React, { useEffect, useState, useRef } from "react";
 import { BrowserRouter, Link, Route, Routes } from "react-router-dom";
-import { SignUp, SignIn, Feed, Profile } from "./pages/index";
+import {
+  SignUp,
+  SignIn,
+  Feed,
+  Profile,
+  PrivacyPolicy,
+  TOS,
+} from "./pages/index";
 import { useCookies } from "react-cookie";
 import axios from "axios";
 import "./index.css";
@@ -100,6 +107,8 @@ const App = () => {
           <Route path="/signin" element={<SignIn />} />
           <Route path="/profile/:username" element={<Profile />} />
           <Route path="/profile/myprofile" element={<Profile />} />
+          <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+          <Route path="/tos" element={<TOS />} />
         </Routes>
       </main>
       <footer className="sticky bottom-0 bg-background">
@@ -109,13 +118,17 @@ const App = () => {
               Copyright © {getYear()} devsync
             </p>
             <div className="flex flex-row justify-center items-center">
-              <p className="text-gray-400 text-sm font-Roboto">
-                Privacy Policy
-              </p>
+              <a href="/tos">
+                <p className="text-gray-400 hover:underline hover:text-primary text-sm font-Roboto">
+                  Terms of Use
+                </p>
+              </a>
               <p className="text-gray-400 text-sm font-Roboto px-2">|</p>
-              <p className="text-gray-400 text-sm font-Roboto">
-                Terms of Service
-              </p>
+              <a href="/privacy-policy">
+                <p className="text-gray-400 hover:underline hover:text-primary text-sm font-Roboto">
+                  Privacy Policy
+                </p>
+              </a>
             </div>
           </div>
         </div>
