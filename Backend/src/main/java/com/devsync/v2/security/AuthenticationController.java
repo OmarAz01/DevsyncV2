@@ -1,4 +1,5 @@
 package com.devsync.v2.security;
+import com.devsync.v2.security.dto.VerificationDTO;
 import com.devsync.v2.security.entity.AuthenticationRequest;
 import com.devsync.v2.security.entity.AuthenticationResponse;
 import com.devsync.v2.security.entity.RegisterRequest;
@@ -42,6 +43,12 @@ public class AuthenticationController {
             HttpServletRequest request,
             HttpServletResponse response) throws IOException {
         authService.logout(request, response);
+    }
+
+    @PostMapping("/verify")
+    public ResponseEntity<AuthenticationResponse> verify(
+            @RequestBody VerificationDTO verification) {
+        return authService.verify(verification);
     }
 
 

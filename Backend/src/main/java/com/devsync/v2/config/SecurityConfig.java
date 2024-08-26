@@ -28,6 +28,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/auth/register").permitAll()
                         .requestMatchers("/api/auth/login").permitAll()
                         .requestMatchers("/api/auth/validate").permitAll()
+                        .requestMatchers("/api/auth/verify").permitAll()
                         .requestMatchers("/api/user/profile/{username}").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/posts").permitAll()
                         .anyRequest().authenticated())

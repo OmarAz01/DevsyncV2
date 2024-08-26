@@ -23,6 +23,7 @@ public class AppConfig {
     @Bean
     public UserDetailsService userDetailsService() {
         return identifier -> {
+
             if (identifier.contains("@")) {
                 // If the identifier contains '@', assume it is an email
                 return (UserDetails) userRepo.findByEmail(identifier)

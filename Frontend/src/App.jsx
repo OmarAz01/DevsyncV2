@@ -4,6 +4,7 @@ import { SignUp, SignIn, Feed, Profile } from "./pages/index";
 import { useCookies } from "react-cookie";
 import axios from "axios";
 import "./index.css";
+import { getYear } from "date-fns";
 
 const App = () => {
   const BASE_URL = import.meta.env.VITE_BASE_URL;
@@ -50,6 +51,10 @@ const App = () => {
     removeCookie("username");
     setLoggedIn(false);
     window.location.href = "/signin";
+  };
+
+  const getYear = () => {
+    return new Date().getFullYear();
   };
 
   return (
@@ -100,7 +105,18 @@ const App = () => {
       <footer className="sticky bottom-0 bg-background">
         <div className="p-4 mt-4 relative bottom-0 inset-x-0 h-fit border-t border-zinc-700 items-center justify-center text-center">
           <div className="w-full items-center flex flex-col">
-            <p className="text-gray-400 pb-2">Created by Omar Alzoubi</p>
+            <p className="text-gray-400 py-1 text-sm font-Roboto">
+              Copyright © {getYear()} devsync
+            </p>
+            <div className="flex flex-row justify-center items-center">
+              <p className="text-gray-400 text-sm font-Roboto">
+                Privacy Policy
+              </p>
+              <p className="text-gray-400 text-sm font-Roboto px-2">|</p>
+              <p className="text-gray-400 text-sm font-Roboto">
+                Terms of Service
+              </p>
+            </div>
           </div>
         </div>
       </footer>

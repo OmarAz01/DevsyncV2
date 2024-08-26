@@ -6,6 +6,7 @@ import "react-toastify/dist/ReactToastify.css";
 import ReceivedSyncs from "../components/feed/ReceivedSyncs";
 import { useCookies } from "react-cookie";
 import SyncModal from "../components/modals/SyncModal";
+import { Helmet } from "react-helmet";
 
 const Feed = () => {
   const [cookie] = useCookies(["token"]);
@@ -42,6 +43,9 @@ const Feed = () => {
 
   return (
     <>
+      <Helmet>
+        <title>Feed | devsync</title>
+      </Helmet>
       <div
         className={`flex sm:mt-12 justify-center items-center ${
           syncing ? "overflow-hidden pointer-events-none" : ""

@@ -1,13 +1,17 @@
 package com.devsync.v2.security.service;
 
+import com.devsync.v2.entity.EmailVerificationEntity;
 import com.devsync.v2.entity.ProfileDetailsEntity;
 import com.devsync.v2.entity.Role;
 import com.devsync.v2.entity.UserEntity;
+import com.devsync.v2.repo.EmailVerificationRepo;
+import com.devsync.v2.security.dto.VerificationDTO;
 import com.devsync.v2.security.entity.AuthenticationRequest;
 import com.devsync.v2.security.entity.AuthenticationResponse;
 import com.devsync.v2.security.entity.RefreshTokenEntity;
 import com.devsync.v2.security.entity.RegisterRequest;
 import com.devsync.v2.security.repo.RefreshTokenRepo;
+import com.devsync.v2.service.EmailService;
 import com.devsync.v2.service.ProfileDetailsService;
 import com.devsync.v2.service.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -23,6 +27,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.Collections;
 
 @Service
@@ -35,6 +40,8 @@ public class AuthService {
     private final RefreshTokenService refreshTokenService;
     private final ProfileDetailsService profileDetailsService;
     private final RefreshTokenRepo refreshTokenRepo;
+    private final EmailVerificationRepo emailVerificationRepo;
+    private final EmailService emailService;
 
 
     public ResponseEntity<AuthenticationResponse> register(RegisterRequest request) {
@@ -51,36 +58,73 @@ public class AuthService {
                     .error("Email already exists").build());
         }
 
-
-        // Creating a new user
-        UserEntity user = new UserEntity();
-        user.setEmail(request.getEmail());
-        user.setFirstName(request.getFirstName());
-        user.setLastName(request.getLastName());
-        user.setUsername(request.getUsername());
-        user.setPassword(passwordEncoder.encode(request.getPassword()));
-        user.setRole(Role.USER);
-        ProfileDetailsEntity profileDetails = new ProfileDetailsEntity();
-        profileDetails.setSkills("Python, Java, C++");
-        profileDetails.setBio("This is " + request.getUsername() + "'s bio. Nothing here yet.");
-        profileDetails.setUser(user);
-
-
-        // Saving the user
+        // Send email verification code and save user with enabled set to false
         try {
+            // Generate code and send email
+            sendVerificationEmail(request.getEmail());
+        }
+        catch (Exception e) {
+            System.out.println(e.toString());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(AuthenticationResponse
+                    .builder().error("Email verification failed").build());
+        }
+        try {
+            // Create a new user with enabled set to false
+            UserEntity user = new UserEntity();
+            user.setEmail(request.getEmail());
+            user.setFirstName(request.getFirstName());
+            user.setLastName(request.getLastName());
+            user.setUsername(request.getUsername());
+            user.setPassword(passwordEncoder.encode(request.getPassword()));
+            user.setRole(Role.USER);
+            user.setEnabled(false);
+            ProfileDetailsEntity profileDetails = new ProfileDetailsEntity();
+            profileDetails.setSkills("Python, Java, C++");
+            profileDetails.setBio("This is " + request.getUsername() + "'s bio. Nothing here yet.");
+            profileDetails.setUser(user);
             userService.save(user);
             profileDetailsService.save(profileDetails);
-            // Create refresh and access tokens
-            UserEntity savedUser = userService.findByEmail(request.getEmail()).getBody();
-            if (savedUser == null) {
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(AuthenticationResponse
-                        .builder().error("Something Went Wrong").build());
+        }
+        catch (Exception e) {
+            System.out.println(e.toString());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(AuthenticationResponse
+                    .builder().error("Registration failed").build());
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(null);
+    }
+
+    public ResponseEntity<AuthenticationResponse> verify(VerificationDTO verification) {
+        EmailVerificationEntity emailVerificationEntity = emailVerificationRepo.findByEmail(verification.getEmail()).orElse(null);
+        if (emailVerificationEntity == null || !emailVerificationEntity.getCode().equals(verification.getCode())) {
+            return ResponseEntity.status(400).body(AuthenticationResponse.builder()
+                    .error("Invalid code").build());
+        }
+        if (emailVerificationEntity.getCreatedAt().plusMinutes(30).isBefore(LocalDateTime.now())) {
+            try {
+                emailVerificationRepo.delete(emailVerificationEntity);
+                sendVerificationEmail(verification.getEmail());
+            } catch (Exception e) {
+                return ResponseEntity.status(400).body(AuthenticationResponse.builder()
+                        .error("Code expired").build());
             }
-            Long userId = savedUser.getUserId();
-            String username = savedUser.getUsername();
+            return ResponseEntity.status(400).body(AuthenticationResponse.builder()
+                    .error("Code expired").build());
+        }
+        emailVerificationRepo.delete(emailVerificationEntity);
+        UserEntity user = userService.findByEmail(verification.getEmail()).getBody();
+        if (user == null) {
+            return ResponseEntity.status(400).body(AuthenticationResponse.builder()
+                    .error("User not found").build());
+        }
+        user.setEnabled(true);
+        try {
+            userService.save(user);
+            // Create refresh and access tokens
+            Long userId = user.getUserId();
+            String username = user.getUsername();
             String jwt = jwtService.generateToken(userId);
             String refreshToken = jwtService.generateRefreshToken(userId);
-            refreshTokenService.createRefreshToken(savedUser.getUserId(), refreshToken, jwt);
+            refreshTokenService.createRefreshToken(user.getUserId(), refreshToken, jwt);
             return ResponseEntity.status(HttpStatus.OK).body(AuthenticationResponse.builder()
                     .id(userId).username(username).jwt(jwt).build());
         } catch (Exception e) {
@@ -91,16 +135,19 @@ public class AuthService {
 
 
     public ResponseEntity<AuthenticationResponse> authenticate(AuthenticationRequest request) {
-        System.out.println("Login request: " + request);
         UserEntity user = userService.findByEmail(request.getEmail()).getBody();
-        System.out.println("User: " + user);
         if (user == null) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(AuthenticationResponse
                     .builder().error("User not found").build());
+        } else if (!user.isEnabled()) {
+            sendVerificationEmail(request.getEmail());
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(AuthenticationResponse
+                    .builder().error("User not verified").build());
         } else {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                     request.getEmail(), request.getPassword(), Collections.emptyList()));
         }
+
         Long userId = user.getUserId();
         String username = user.getUsername();
         // Delete old refresh token
@@ -113,6 +160,30 @@ public class AuthService {
                 request.getEmail(), request.getPassword(), Collections.emptyList()));
         return ResponseEntity.status(HttpStatus.OK).body(AuthenticationResponse.builder()
                 .id(userId).username(username).jwt(jwt).build());
+    }
+
+    private void sendVerificationEmail(String email) {
+        EmailVerificationEntity availableVerification = emailVerificationRepo.findByEmail(email).orElse(null);
+        if (availableVerification != null) {
+            // If the code was created less than 30 minutes ago, do not send another email
+            if (availableVerification.getCreatedAt().plusMinutes(30).isAfter(LocalDateTime.now())) {
+                return;
+            }
+            // If the code was created more than 30 minutes ago, delete the old code and send a new one
+            emailVerificationRepo.delete(availableVerification);
+        }
+        try {
+            String code = emailService.generateCode();
+            emailService.sendEmail(email, code);
+            EmailVerificationEntity emailVerificationEntity = new EmailVerificationEntity();
+            emailVerificationEntity.setEmail(email);
+            emailVerificationEntity.setCode(code);
+            LocalDateTime createdAt = LocalDateTime.now();
+            emailVerificationEntity.setCreatedAt(createdAt);
+            emailVerificationRepo.save(emailVerificationEntity);
+        } catch (Exception e) {
+            System.out.println(e.toString());
+        }
     }
 
     public void validateToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -174,4 +245,6 @@ public class AuthService {
         refreshTokenService.deleteRefreshToken(id);
         response.setStatus(HttpServletResponse.SC_OK);
     }
+
+
 }

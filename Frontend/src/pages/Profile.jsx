@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import SkillSection from "../components/profile/SkillSection";
 import BioSection from "../components/profile/BioSection";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useCookies } from "react-cookie";
 import axios from "axios";
+import { Helmet } from "react-helmet";
 import {
   RegExpMatcher,
   englishDataset,
@@ -21,6 +22,8 @@ const Profile = () => {
   const [currUserProfile, setCurrUserProfile] = useState(false);
   const [editProfile, setEditProfile] = useState(false);
   const [updatedUserDetails, setUpdatedUserDetails] = useState({});
+  const [clickCount, setClickCount] = useState(0);
+  const [lastResetTime, setLastResetTime] = useState(Date.now());
 
   const createAlert = (title, variant) => {
     if (variant === "success") {
@@ -88,7 +91,6 @@ const Profile = () => {
     if (!verifyProfileDetails(updatedUserDetails)) {
       return;
     }
-
     const token = cookie.token;
     const headers = {
       Authorization: `Bearer ${token}`,
@@ -159,6 +161,9 @@ const Profile = () => {
 
   return (
     <>
+      <Helmet>
+        <title>{location.pathname.split("/")[2]} | devsync</title>
+      </Helmet>
       <div
         className={`flex sm:mt-12 justify-center items-center ${
           editProfile ? "overflow-hidden pointer-events-none" : ""

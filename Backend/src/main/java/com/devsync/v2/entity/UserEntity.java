@@ -26,6 +26,7 @@ public class UserEntity implements UserDetails {
     private String firstName;
     private String lastName;
     private String password;
+    private boolean enabled;
     @Enumerated(EnumType.STRING)
     private Role role;
     @OneToOne(mappedBy = "user", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY, orphanRemoval = true)
@@ -57,6 +58,11 @@ public class UserEntity implements UserDetails {
     private List<ReportEntity> receivedReports;
 
     @Override
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    @Override
     public boolean isAccountNonExpired() {
         return true;
     }
@@ -68,11 +74,6 @@ public class UserEntity implements UserDetails {
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isEnabled() {
         return true;
     }
 
