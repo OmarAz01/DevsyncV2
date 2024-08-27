@@ -29,6 +29,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/auth/login").permitAll()
                         .requestMatchers("/api/auth/validate").permitAll()
                         .requestMatchers("/api/auth/verify").permitAll()
+                        .requestMatchers("/health").permitAll()
                         .requestMatchers("/api/user/profile/{username}").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/posts").permitAll()
                         .anyRequest().authenticated())
@@ -42,7 +43,8 @@ public class SecurityConfig {
         return new WebMvcConfigurer() {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/**").allowedOrigins("https://devsync.org")
+                registry.addMapping("/**")
+                        .allowedOrigins("https://devsync.org", "https://www.devsync.org")
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "HEAD", "OPTIONS")
                         .allowedHeaders("*");
             }

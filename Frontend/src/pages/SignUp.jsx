@@ -38,144 +38,138 @@ export default function SignUp() {
   const [lastResetTime1, setLastResetTime1] = useState(Date.now());
   const [lastResetTime2, setLastResetTime2] = useState(Date.now());
 
-  const handleSubmit = useCallback(
-    (event) => {
-      event.preventDefault();
-      const currentTime1 = Date.now();
-      const timeElapsed1 = currentTime1 - lastResetTime1;
-      if (clickCount1 < 3) {
-        setClickCount1((prevCount1) => prevCount1 + 1);
-      } else if (timeElapsed1 >= 45000) {
-        setClickCount1(1);
-        setLastResetTime1(currentTime1);
-      } else {
-        toast.warning("Too many requests, Plaese wait before submitting again");
-        return;
-      }
-      const data = new FormData(event.currentTarget);
-      // Form Validation
-      const profanityMatcher = new RegExpMatcher({
-        ...englishDataset.build(),
-        ...englishRecommendedTransformers,
+  const handleSubmit = () => (event) => {
+    event.preventDefault();
+    const currentTime1 = Date.now();
+    const timeElapsed1 = currentTime1 - lastResetTime1;
+    if (clickCount1 < 3) {
+      setClickCount1((prevCount1) => prevCount1 + 1);
+    } else if (timeElapsed1 >= 45000) {
+      setClickCount1(1);
+      setLastResetTime1(currentTime1);
+    } else {
+      toast.warning("Too many requests, Plaese wait before submitting again");
+      return;
+    }
+    const data = new FormData(event.currentTarget);
+    // Form Validation
+    const profanityMatcher = new RegExpMatcher({
+      ...englishDataset.build(),
+      ...englishRecommendedTransformers,
+    });
+    const passwordRegex =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,30}$/;
+    const emailRegex =
+      /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+
+    if (profanityMatcher.hasMatch(data.get("username"))) {
+      toast.error("Username contains profanity");
+      return;
+    }
+    if (profanityMatcher.hasMatch(data.get("firstName"))) {
+      toast.error("First name contains profanity");
+      return;
+    }
+    if (profanityMatcher.hasMatch(data.get("lastName"))) {
+      toast.error("Last name contains profanity");
+      return;
+    }
+    if (profanityMatcher.hasMatch(data.get("email"))) {
+      toast.error("Email contains profanity");
+      return;
+    }
+    if (
+      data.get("username").toLowerCase() === "admin" ||
+      data.get("username").toLowerCase() === "administrator" ||
+      data.get("username").toLowerCase() === "myprofile"
+    ) {
+      toast.error("Username is not allowed");
+      return;
+    }
+
+    if (!passwordRegex.test(data.get("password"))) {
+      toast.error(
+        "Password must contain an uppercase letter, a symbol, and a number"
+      );
+      return;
+    }
+    if (data.get("password") !== data.get("confirm-password")) {
+      toast.error("Passwords do not match");
+      return;
+    }
+    if (!emailRegex.test(data.get("email"))) {
+      toast.error("Invalid email address");
+      return;
+    }
+    const usernameRegex = /^[a-zA-Z0-9]+$/;
+    if (!usernameRegex.test(data.get("username"))) {
+      toast.error("Username should not contain any symbols");
+      return;
+    }
+
+    const user = {
+      firstName: data.get("firstName"),
+      lastName: data.get("lastName"),
+      username: data.get("username"),
+      email: data.get("email"),
+      password: data.get("password"),
+    };
+    axios
+      .post(BASE_URL + "/api/auth/register", user)
+      .then((response) => {
+        setVerify({ verify: true, email: user.email });
+        // toast.success("User registered successfully");
+        // setCookie("token", response.data.jwt, { path: "/" });
+        // setCookie("user", response.data.id, { path: "/" });
+        // setCookie("username", response.data.username, { path: "/" });
+        // window.location.href = "/profile/myprofile";
+      })
+      .catch((error) => {
+        if (error.response && error.response.status === 400) {
+          toast.error(error.response.data.error);
+        } else {
+          console.log(error);
+          toast.error("An error occurred");
+        }
       });
-      const passwordRegex =
-        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,30}$/;
-      const emailRegex =
-        /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  };
 
-      if (profanityMatcher.hasMatch(data.get("username"))) {
-        toast.error("Username contains profanity");
-        return;
-      }
-      if (profanityMatcher.hasMatch(data.get("firstName"))) {
-        toast.error("First name contains profanity");
-        return;
-      }
-      if (profanityMatcher.hasMatch(data.get("lastName"))) {
-        toast.error("Last name contains profanity");
-        return;
-      }
-      if (profanityMatcher.hasMatch(data.get("email"))) {
-        toast.error("Email contains profanity");
-        return;
-      }
-      if (
-        data.get("username").toLowerCase() === "admin" ||
-        data.get("username").toLowerCase() === "administrator" ||
-        data.get("username").toLowerCase() === "myprofile"
-      ) {
-        toast.error("Username is not allowed");
-        return;
-      }
-
-      if (!passwordRegex.test(data.get("password"))) {
-        toast.error(
-          "Password must contain an uppercase letter, a symbol, and a number"
-        );
-        return;
-      }
-      if (data.get("password") !== data.get("confirm-password")) {
-        toast.error("Passwords do not match");
-        return;
-      }
-      if (!emailRegex.test(data.get("email"))) {
-        toast.error("Invalid email address");
-        return;
-      }
-      const usernameRegex = /^[a-zA-Z0-9]+$/;
-      if (!usernameRegex.test(data.get("username"))) {
-        toast.error("Username should not contain any symbols");
-        return;
-      }
-
-      const user = {
-        firstName: data.get("firstName"),
-        lastName: data.get("lastName"),
-        username: data.get("username"),
-        email: data.get("email"),
-        password: data.get("password"),
-      };
-      axios
-        .post(BASE_URL + "/api/auth/register", user)
-        .then((response) => {
-          setVerify({ verify: true, email: user.email });
-          // toast.success("User registered successfully");
-          // setCookie("token", response.data.jwt, { path: "/" });
-          // setCookie("user", response.data.id, { path: "/" });
-          // setCookie("username", response.data.username, { path: "/" });
-          // window.location.href = "/profile/myprofile";
-        })
-        .catch((error) => {
-          if (error.response && error.response.status === 400) {
-            toast.error(error.response.data.error);
-          } else {
-            console.log(error);
-            toast.error("An error occurred");
-          }
-        });
-    },
-    [clickCount1, lastResetTime1, setVerify]
-  );
-
-  const handleVerifySubmit = useCallback(
-    (event) => {
-      event.preventDefault();
-      const currentTime2 = Date.now();
-      const timeElapsed2 = currentTime2 - lastResetTime2;
-      if (clickCount2 < 3) {
-        setClickCount2((prevCount2) => prevCount2 + 1);
-      } else if (timeElapsed2 >= 45000) {
-        setClickCount2(1);
-        setLastResetTime2(currentTime2);
-      } else {
-        toast.warning("Too many requests, Plaese wait before submitting again");
-        return;
-      }
-      const data = new FormData(event.currentTarget);
-      const verification = {
-        email: email,
-        code: data.get("code"),
-      };
-      axios
-        .post(BASE_URL + "/api/auth/verify", verification)
-        .then((response) => {
-          toast.success("User verified successfully");
-          setCookie("token", response.data.jwt, { path: "/" });
-          setCookie("user", response.data.id, { path: "/" });
-          setCookie("username", response.data.username, { path: "/" });
-          window.location.href = "/profile/myprofile";
-        })
-        .catch((error) => {
-          if (error.response && error.response.status === 400) {
-            toast.error(error.response.data.error);
-          } else {
-            console.log(error);
-            toast.error("An error occurred");
-          }
-        });
-    },
-    [clickCount2, lastResetTime2, setCookie]
-  );
+  const handleVerifySubmit = () => (event) => {
+    event.preventDefault();
+    const currentTime2 = Date.now();
+    const timeElapsed2 = currentTime2 - lastResetTime2;
+    if (clickCount2 < 3) {
+      setClickCount2((prevCount2) => prevCount2 + 1);
+    } else if (timeElapsed2 >= 45000) {
+      setClickCount2(1);
+      setLastResetTime2(currentTime2);
+    } else {
+      toast.warning("Too many requests, Plaese wait before submitting again");
+      return;
+    }
+    const data = new FormData(event.currentTarget);
+    const verification = {
+      email: email,
+      code: data.get("code"),
+    };
+    axios
+      .post(BASE_URL + "/api/auth/verify", verification)
+      .then((response) => {
+        toast.success("User verified successfully");
+        setCookie("token", response.data.jwt, { path: "/" });
+        setCookie("user", response.data.id, { path: "/" });
+        setCookie("username", response.data.username, { path: "/" });
+        window.location.href = "/profile/myprofile";
+      })
+      .catch((error) => {
+        if (error.response && error.response.status === 400) {
+          toast.error(error.response.data.error);
+        } else {
+          console.log(error);
+          toast.error("An error occurred");
+        }
+      });
+  };
 
   return (
     <>
