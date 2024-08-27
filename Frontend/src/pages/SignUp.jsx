@@ -38,7 +38,7 @@ export default function SignUp() {
   const [lastResetTime1, setLastResetTime1] = useState(Date.now());
   const [lastResetTime2, setLastResetTime2] = useState(Date.now());
 
-  const handleSubmit = () => (event) => {
+  const handleSubmit = (event) => {
     event.preventDefault();
     const currentTime1 = Date.now();
     const timeElapsed1 = currentTime1 - lastResetTime1;
@@ -134,7 +134,7 @@ export default function SignUp() {
       });
   };
 
-  const handleVerifySubmit = () => (event) => {
+  const handleVerifySubmit = (event) => {
     event.preventDefault();
     const currentTime2 = Date.now();
     const timeElapsed2 = currentTime2 - lastResetTime2;
