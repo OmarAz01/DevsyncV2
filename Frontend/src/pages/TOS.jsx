@@ -69,14 +69,6 @@ const TOS = () => {
           any time. Your continued use of the site after any changes indicates
           your acceptance of the updated terms.
         </p>
-        <h2 className="sm:text-2xl text-xl font-Roboto font-bold text-primary px-4 pt-4">
-          Contact Us
-        </h2>
-        <p className="text-gray-400 font-Roboto pt-1 px-4">
-          If you have any questions or concerns about our privacy policy, please
-          contact us at{" "}
-          <a href="mailto:support@devsync.org">support@devsync.org</a>
-        </p>
       </div>
     </div>
   );

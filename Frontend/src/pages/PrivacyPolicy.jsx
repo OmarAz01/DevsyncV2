@@ -94,14 +94,6 @@ const PrivacyPolicy = () => {
           We may update our privacy policy from time to time. We will notify you
           of any changes by posting the new privacy policy on this page.
         </p>
-        <h2 className="sm:text-2xl text-xl font-Roboto font-bold text-primary px-4 pt-4">
-          Contact Us
-        </h2>
-        <p className="text-gray-400 font-Roboto pt-1 px-4">
-          If you have any questions or concerns about our privacy policy, please
-          contact us at{" "}
-          <a href="mailto:support@devsync.org">support@devsync.org</a>
-        </p>
       </div>
     </div>
   );
