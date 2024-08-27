@@ -16,6 +16,7 @@ import { useCookies } from "react-cookie";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Helmet } from "react-helmet";
+import { ButtonGroupButtonContext } from "@mui/material";
 
 const defaultTheme = createTheme({
   palette: {
@@ -149,14 +150,14 @@ export default function SignIn() {
           <CssBaseline />
           <Box
             sx={{
-              marginTop: 8,
+              marginTop: 4,
               display: "flex",
               flexDirection: "column",
               alignItems: "center",
             }}
           >
             <div className="flex items-center justify-center lg:justify-between lg:flex-row flex-col w-full max-w-6xl lg:mt-16">
-              <div className="lg:w-1/3 lg:pr-4 lg:mb-0 mb-16 lg:text-left text-center">
+              <div className="lg:w-1/3 lg:pr-4 lg:mb-0 mb-10 lg:text-left text-center">
                 <h1 className="text-5xl font-Roboto text-primary pb-2">
                   devsync
                 </h1>
@@ -236,10 +237,7 @@ export default function SignIn() {
                       >
                         Sign In
                       </Button>
-                      <div className="flex items-center justify-between">
-                        <Link href="/forgotpassword" variant="body2">
-                          Forgot password?
-                        </Link>
+                      <div className="flex items-center justify-center">
                         <Link href="/signup" variant="body2">
                           {"Don't have an account? Sign Up"}
                         </Link>

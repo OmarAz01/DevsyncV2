@@ -8,7 +8,7 @@ import org.springframework.http.ResponseEntity;
 public interface UserService {
     ResponseEntity<UserDTO> findUser(Long id);
 
-    ResponseEntity<Long> deleteUser(Long id);
+    ResponseEntity<Long> deleteUser();
 
     ResponseEntity<UserDTO> findByUsername(String username);
 

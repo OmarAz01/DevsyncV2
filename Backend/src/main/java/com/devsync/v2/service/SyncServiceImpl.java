@@ -39,7 +39,6 @@ public class SyncServiceImpl implements SyncService{
         Object principal = authentication.getPrincipal();
         if (principal instanceof UserEntity) {
             UserEntity user = (UserEntity) principal;
-
             List<SyncDTO> receivedSyncs = new ArrayList<>();
             try {
                 for (SyncEntity sync : syncRepo.findByRecipient(user)) {

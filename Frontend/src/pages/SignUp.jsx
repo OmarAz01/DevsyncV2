@@ -187,14 +187,14 @@ export default function SignUp() {
           <CssBaseline />
           <Box
             sx={{
-              marginTop: 8,
+              marginTop: 4,
               display: "flex",
               flexDirection: "column",
               alignItems: "center",
             }}
           >
             <div className="flex items-center justify-center lg:justify-between lg:flex-row flex-col w-full max-w-6xl lg:mt-16">
-              <div className="lg:w-1/3 lg:pr-4 lg:mb-0 mb-16 lg:text-left text-center">
+              <div className="lg:w-1/3 lg:pr-4 lg:mb-0 mb-10 lg:text-left text-center">
                 <h1 className="text-5xl font-Roboto  text-primary pb-2">
                   devsync
                 </h1>
@@ -238,7 +238,9 @@ export default function SignUp() {
                   </>
                 ) : (
                   <>
-                    <h2 className="text-3xl font-Roboto">Sign Up</h2>
+                    <h2 className="text-2xl md:text-3xl font-Roboto">
+                      Sign Up
+                    </h2>
                     <Box
                       component="form"
                       onSubmit={handleSubmit}

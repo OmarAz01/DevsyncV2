@@ -24,10 +24,14 @@ public class UserController {
         return profileDetailsService.updateProfileDetails(username, updatedProfile);
     }
 
-    // Report a user
     @PostMapping("/report")
     public ResponseEntity<ReportDTO> reportUser(@RequestBody ReportDTO report) {
         return userService.reportUser(report);
+    }
+
+    @DeleteMapping()
+    public ResponseEntity<Long> deleteUser() {
+        return userService.deleteUser();
     }
 
 }

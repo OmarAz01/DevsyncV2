@@ -13,6 +13,7 @@ import {
 } from "obscenity";
 import ReceivedSyncs from "../components/feed/ReceivedSyncs";
 import DisplayPosts from "../components/posts/DisplayPosts";
+import { set } from "date-fns";
 
 const Profile = () => {
   const BASE_URL = import.meta.env.VITE_BASE_URL;
@@ -24,7 +25,12 @@ const Profile = () => {
   const [updatedUserDetails, setUpdatedUserDetails] = useState({});
   const [clickCount, setClickCount] = useState(0);
   const [lastResetTime, setLastResetTime] = useState(Date.now());
-
+  const [deleteConfirmation, setDeleteConfirmation] = useState(false);
+  const [passwordForm, setPasswordForm] = useState({
+    oldPassword: "",
+    newPassword: "",
+    confirmPassword: "",
+  });
   const createAlert = (title, variant) => {
     if (variant === "success") {
       return toast.success(title);
@@ -159,6 +165,84 @@ const Profile = () => {
     }
   }, [editProfile]);
 
+  const handlePasswordChange = (e) => {
+    e.preventDefault();
+    const passwordRegex =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,30}$/;
+    const password = passwordForm.oldPassword;
+    const newPassword = passwordForm.newPassword;
+    const confirmPassword = passwordForm.confirmPassword;
+    if (!password || !newPassword || !confirmPassword) {
+      createAlert("All fields are required", "error");
+      return;
+    }
+    if (!passwordRegex.test(password)) {
+      createAlert(
+        "Password must be atleast 8 characters long and contain one uppercase letter, one lowercase letter, one number and one special character",
+        "error"
+      );
+      return;
+    }
+    if (newPassword !== confirmPassword) {
+      createAlert("Passwords do not match", "error");
+      return;
+    }
+    if (password === newPassword) {
+      createAlert("New password cannot be the same as old password", "error");
+      return;
+    }
+    if (!passwordRegex.test(newPassword)) {
+      createAlert(
+        "New password must be atleast 8 characters long and contain one uppercase letter, one lowercase letter, one number and one special character",
+        "error"
+      );
+      return;
+    }
+    const token = cookie.token;
+    const headers = {
+      Authorization: `Bearer ${token}`,
+    };
+    axios
+      .put(
+        `${BASE_URL}/api/auth/password`,
+        {
+          oldPassword: password,
+          newPassword: newPassword,
+        },
+        { headers: headers }
+      )
+      .then((response) => {
+        setPasswordForm({
+          oldPassword: "",
+          newPassword: "",
+          confirmPassword: "",
+        });
+        createAlert("Password changed successfully", "success");
+      })
+      .catch((error) => {
+        createAlert("Password change failed", "error");
+      });
+  };
+
+  const handleDeleteAccount = () => {
+    const token = cookie.token;
+    const headers = {
+      Authorization: `Bearer ${token}`,
+    };
+    axios
+      .delete(`${BASE_URL}/api/user`, { headers: headers })
+      .then((response) => {
+        createAlert("Account deleted successfully", "success");
+        removeCookie("token");
+        removeCookie("user");
+        removeCookie("username");
+        window.location.href = "/signin";
+      })
+      .catch((error) => {
+        createAlert("Account deletion failed", "error");
+      });
+  };
+
   return (
     <>
       <Helmet>
@@ -266,10 +350,69 @@ const Profile = () => {
               </div>
             )}
             {currUserProfile && currentView === "Settings" && (
-              <div className="flex flex-col items-center justify-center mt-4">
-                <p className="text-secondary text-lg font-Roboto mt-4">
-                  No settings yet
-                </p>
+              <div className="flex flex-col text-start items-start justify-center mt-6">
+                <h4 className="text-secondary text-lg sm:text-xl font-Roboto font-medium">
+                  Change Password
+                </h4>
+                <form
+                  onSubmit={(e) => handlePasswordChange(e)}
+                  className="flex flex-col w-full"
+                >
+                  <input
+                    type="password"
+                    placeholder="Current Password"
+                    value={passwordForm.oldPassword}
+                    onChange={(e) => {
+                      setPasswordForm({
+                        ...passwordForm,
+                        oldPassword: e.target.value,
+                      });
+                    }}
+                    className="w-full p-2 mt-2 bg-background text-secondary rounded-md border border-neutral-400"
+                  />
+                  <input
+                    type="password"
+                    placeholder="New Password"
+                    value={passwordForm.newPassword}
+                    onChange={(e) => {
+                      setPasswordForm({
+                        ...passwordForm,
+                        newPassword: e.target.value,
+                      });
+                    }}
+                    className="w-full p-2 mt-2 bg-background text-secondary rounded-md border border-neutral-400"
+                  />
+                  <input
+                    type="password"
+                    placeholder="Confirm New Password"
+                    value={passwordForm.confirmPassword}
+                    onChange={(e) => {
+                      setPasswordForm({
+                        ...passwordForm,
+                        confirmPassword: e.target.value,
+                      });
+                    }}
+                    className="w-full p-2 mt-2 bg-background text-secondary rounded-md border border-neutral-400"
+                  />
+                  <button
+                    type="submit"
+                    className="bg-primary hover:brightness-110 hover:scale-105 text-background font-Roboto font-bold text-lg w-20 py-0.5 rounded-md mt-3"
+                  >
+                    Save
+                  </button>
+                </form>
+                <h4 className="text-secondary text-lg sm:text-xl font-Roboto font-medium mt-6">
+                  Delete Account
+                </h4>
+                <h4 className="text-neutral-400 text-sm sm:text-base font-Roboto">
+                  This action cannot be undone. All your data will be lost.
+                </h4>
+                <button
+                  onClick={(e) => setDeleteConfirmation(true)}
+                  className="bg-red-600 hover:brightness-110 hover:scale-105 text-background font-Roboto font-bold text-lg w-20 py-0.5 rounded-md mt-3"
+                >
+                  Delete
+                </button>
               </div>
             )}
           </div>
@@ -287,6 +430,34 @@ const Profile = () => {
           theme="dark"
         />
       </div>
+      {deleteConfirmation && (
+        <>
+          <div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm z-40 pointer-events-none"></div>
+          <div className="fixed h-fit w-4/5 sm:w-[600px] top-1/2 left-1/2 transform -translate-x-1/2 rounded-3xl -translate-y-1/2 bg-background border-2 border-primary shadow-xl shadow-black px-2 pt-2 sm:px-8 sm:pt-8 z-50">
+            <div className="flex flex-col h-full">
+              <h1 className="text-secondary text-center text-xl sm:text-2xl border-b pb-2 px-4 sm:mt-0 mt-2 border-neutral-700 font-Roboto font-bold">
+                Are you sure you want to delete your account?
+              </h1>
+              <div className="flex-col flex justify-start w-full p-2 md:p-4 items-start">
+                <div className="flex flex-row items-center justify-center my-4 space-x-4 w-full">
+                  <button
+                    onClick={() => handleDeleteAccount()}
+                    className="bg-red-500 hover:brightness-110 hover:scale-105 text-background font-Roboto font-bold text-lg py-1 w-20 rounded-md"
+                  >
+                    Delete
+                  </button>
+                  <button
+                    onClick={() => setDeleteConfirmation(false)}
+                    className="bg-primary hover:brightness-110 hover:scale-105 text-background font-Roboto font-bold text-lg py-1 w-20 rounded-md"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </>
+      )}
       {editProfile && (
         <>
           <div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm z-40 pointer-events-none"></div>

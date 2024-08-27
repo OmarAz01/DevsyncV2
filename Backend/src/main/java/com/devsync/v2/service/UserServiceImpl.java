@@ -37,20 +37,6 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ResponseEntity<Long> deleteUser(Long id) {
-        Optional<UserEntity> user = userRepo.findByUserId(id);
-        if (user.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-        }
-        try {
-            userRepo.deleteById(id);
-            return ResponseEntity.status(HttpStatus.OK).body(id);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
-        }
-    }
-
-    @Override
     public ResponseEntity<UserDTO> findByUsername(String username) {
         Optional<UserEntity> user = userRepo.findByUsername(username);
         if (user.isEmpty()) {
@@ -119,6 +105,18 @@ public class UserServiceImpl implements UserService {
             } catch (Exception e) {
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
             }
+        }
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
+    }
+
+    @Override
+    public ResponseEntity<Long> deleteUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Object principal = authentication.getPrincipal();
+        if (principal instanceof UserEntity) {
+            UserEntity user = (UserEntity) principal;
+            userRepo.delete(user);
+            return ResponseEntity.status(HttpStatus.OK).body(user.getUserId());
         }
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
     }

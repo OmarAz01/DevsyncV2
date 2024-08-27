@@ -11,7 +11,6 @@ import {
 import { useCookies } from "react-cookie";
 import axios from "axios";
 import "./index.css";
-import { getYear } from "date-fns";
 
 const App = () => {
   const BASE_URL = import.meta.env.VITE_BASE_URL;
@@ -102,7 +101,7 @@ const App = () => {
       </header>
       <main className="min-h-[calc(100vh-200px)]">
         <Routes>
-          <Route path="/" element={<Feed />} />
+          <Route path="/" element={loggedIn ? <Feed /> : <SignIn />} />
           <Route path="/signup" element={<SignUp />} />
           <Route path="/signin" element={<SignIn />} />
           <Route path="/profile/:username" element={<Profile />} />

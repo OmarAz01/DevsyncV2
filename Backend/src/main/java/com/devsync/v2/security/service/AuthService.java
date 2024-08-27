@@ -5,6 +5,7 @@ import com.devsync.v2.entity.ProfileDetailsEntity;
 import com.devsync.v2.entity.Role;
 import com.devsync.v2.entity.UserEntity;
 import com.devsync.v2.repo.EmailVerificationRepo;
+import com.devsync.v2.security.dto.ChangePasswordDTO;
 import com.devsync.v2.security.dto.VerificationDTO;
 import com.devsync.v2.security.entity.AuthenticationRequest;
 import com.devsync.v2.security.entity.AuthenticationResponse;
@@ -22,6 +23,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -231,6 +233,31 @@ public class AuthService {
             AuthenticationResponse authenticationResponse = AuthenticationResponse.builder()
                     .id(userId).jwt(jwt).build();
             new ObjectMapper().writeValue(response.getOutputStream(), authenticationResponse);
+        }
+    }
+
+    public ResponseEntity<?> changePassword(ChangePasswordDTO request) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Object principal = authentication.getPrincipal();
+        System.out.println("Before checking principal");
+        if (principal instanceof UserEntity) {
+            System.out.println("Changing password for user" + ((UserEntity) principal).getUsername());
+            UserEntity user = (UserEntity) principal;
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
+                    user.getEmail(), request.getOldPassword(), Collections.emptyList()));
+            user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+            try {
+                System.out.println("Saving user");
+                userService.save(user);
+                return ResponseEntity.ok(null);
+            } catch (Exception e) {
+                System.out.println(e.toString());
+                return ResponseEntity.status(500).body(null);
+            }
+        }
+        else {
+            System.out.println("principal is not UserEntity");
+            return ResponseEntity.status(403).body(null);
         }
     }
 

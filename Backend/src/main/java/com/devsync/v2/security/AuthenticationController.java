@@ -1,4 +1,5 @@
 package com.devsync.v2.security;
+import com.devsync.v2.security.dto.ChangePasswordDTO;
 import com.devsync.v2.security.dto.VerificationDTO;
 import com.devsync.v2.security.entity.AuthenticationRequest;
 import com.devsync.v2.security.entity.AuthenticationResponse;
@@ -49,6 +50,12 @@ public class AuthenticationController {
     public ResponseEntity<AuthenticationResponse> verify(
             @RequestBody VerificationDTO verification) {
         return authService.verify(verification);
+    }
+
+    @PutMapping("/password")
+    public ResponseEntity<?> changePassword(
+            @RequestBody ChangePasswordDTO request) {
+        return authService.changePassword(request);
     }
 
 

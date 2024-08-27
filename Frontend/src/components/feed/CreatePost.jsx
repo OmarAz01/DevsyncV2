@@ -98,6 +98,9 @@ const CreatePost = ({ createAlert }) => {
             "You have reached the post limit check back later",
             "error"
           );
+          setIsCollapsed(true);
+          e.target.reset();
+          setDescription("");
         } else {
           console.log(error);
           createAlert("An error occurred while creating the post", "error");
