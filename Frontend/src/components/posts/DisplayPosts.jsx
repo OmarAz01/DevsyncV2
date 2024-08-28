@@ -85,14 +85,15 @@ const DisplayPosts = ({ rawPosts, turnOnSyncModal }) => {
             )}
           </div>
           <div className="flex flex-wrap items-center pb-1">
-            {post.skills.map((skill, index) => (
-              <div
-                key={index}
-                className="flex justify-center items-center bg-neutral-900 text-secondary mb-1 font-Noto px-2 mr-2 rounded-xl border border-primary"
-              >
-                {skill}
-              </div>
-            ))}
+            {post.skills.length > 0 &&
+              post.skills.map((skill, index) => (
+                <div
+                  key={index}
+                  className="flex justify-center items-center bg-neutral-900 text-secondary mb-1 font-Noto px-2 mr-2 rounded-xl border border-primary"
+                >
+                  {skill}
+                </div>
+              ))}
           </div>
         </div>
       ))}

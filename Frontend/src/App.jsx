@@ -31,7 +31,9 @@ const App = () => {
         .then((response) => {
           if (response.status === 200) {
             setCookie("token", response.data.jwt, { path: "/" });
-            setCookie("user", response.data.id, { path: "/" });
+            setCookie("user", response.data.id, {
+              path: "/",
+            });
             setLoggedIn(true);
             console.log("User is logged in");
           }
@@ -101,7 +103,7 @@ const App = () => {
       </header>
       <main className="min-h-[calc(100vh-200px)]">
         <Routes>
-          <Route path="/" element={loggedIn ? <Feed /> : <SignIn />} />
+          <Route path="/" element={<Feed />} />
           <Route path="/signup" element={<SignUp />} />
           <Route path="/signin" element={<SignIn />} />
           <Route path="/profile/:username" element={<Profile />} />
