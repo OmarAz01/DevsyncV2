@@ -433,25 +433,29 @@ const Profile = () => {
       {deleteConfirmation && (
         <>
           <div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm z-40 pointer-events-none"></div>
-          <div className="fixed h-fit w-4/5 sm:w-[600px] top-1/2 left-1/2 transform -translate-x-1/2 rounded-3xl -translate-y-1/2 bg-background border-2 border-primary shadow-xl shadow-black px-2 pt-2 sm:px-8 sm:pt-8 z-50">
-            <div className="flex flex-col h-full">
-              <h1 className="text-secondary text-center text-xl sm:text-2xl border-b pb-2 px-4 sm:mt-0 mt-2 border-neutral-700 font-Roboto font-bold">
-                Are you sure you want to delete your account?
-              </h1>
-              <div className="flex-col flex justify-start w-full p-2 md:p-4 items-start">
-                <div className="flex flex-row items-center justify-center my-4 space-x-4 w-full">
-                  <button
-                    onClick={() => handleDeleteAccount()}
-                    className="bg-red-500 hover:brightness-110 hover:scale-105 text-background font-Roboto font-bold text-lg py-1 w-20 rounded-md"
-                  >
-                    Delete
-                  </button>
-                  <button
-                    onClick={() => setDeleteConfirmation(false)}
-                    className="bg-primary hover:brightness-110 hover:scale-105 text-background font-Roboto font-bold text-lg py-1 w-20 rounded-md"
-                  >
-                    Cancel
-                  </button>
+          <div className="fixed inset-0 flex items-center justify-center z-50">
+            <div className="w-4/5 sm:w-[600px] max-h-[90vh] overflow-y-auto bg-background border-2 border-primary shadow-xl shadow-black rounded-3xl">
+              <div className="px-2 pt-2 sm:px-8 sm:pt-8">
+                <div className="flex flex-col">
+                  <h1 className="text-secondary text-center text-xl sm:text-2xl border-b pb-2 px-4 sm:mt-0 mt-2 border-neutral-700 font-Roboto font-bold">
+                    Are you sure you want to delete your account?
+                  </h1>
+                  <div className="flex-col flex justify-start w-full p-2 md:p-4 items-start">
+                    <div className="flex flex-row items-center justify-center my-4 space-x-4 w-full">
+                      <button
+                        onClick={() => handleDeleteAccount()}
+                        className="bg-red-500 hover:brightness-110 hover:scale-105 text-background font-Roboto font-bold text-lg py-1 w-20 rounded-md"
+                      >
+                        Delete
+                      </button>
+                      <button
+                        onClick={() => setDeleteConfirmation(false)}
+                        className="bg-primary hover:brightness-110 hover:scale-105 text-background font-Roboto font-bold text-lg py-1 w-20 rounded-md"
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -461,96 +465,98 @@ const Profile = () => {
       {editProfile && (
         <>
           <div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm z-40 pointer-events-none"></div>
-          <div className="fixed max-h-[750px] h-4/5 w-4/5 sm:w-[600px] top-1/2 left-1/2 transform -translate-x-1/2 rounded-3xl -translate-y-1/2 bg-background border-2 border-primary shadow-xl shadow-black p-2 sm:p-8 z-50">
-            <div className="flex flex-col h-full">
-              <h1 className="text-secondary text-center text-xl sm:text-2xl border-b pb-2 px-4 sm:mt-0 mt-2 border-neutral-700 font-Roboto font-bold">
-                Edit Profile
-              </h1>
-              <div className="flex flex-col h-full overflow-y-auto pb-2 mt-2 px-4">
-                <div className="flex-col mt-2 sm:mt-6 flex justify-start w-full items-start">
-                  <h2 className="text-secondary text-lg sm:text-xl font-Roboto font-medium">
-                    User Header Link
-                  </h2>
-                  <h3 className="text-neutral-400 text-xs sm:text-sm font-Roboto ">
-                    This link will be displayed on your profile header. Use it
-                    to show off a project, personal website, or your preferred
-                    social media.
-                  </h3>
-                  <input
-                    type="text"
-                    placeholder="User Link"
-                    value={updatedUserDetails.userLink}
-                    maxLength={100}
-                    onChange={(e) =>
-                      setUpdatedUserDetails({
-                        ...updatedUserDetails,
-                        userLink: e.target.value,
-                      })
-                    }
-                    className="w-full p-2 mt-2 bg-background text-secondary rounded-md border border-neutral-400"
-                  />
-                </div>
-                <div className="flex-col mt-4 flex justify-start w-full items-start">
-                  <h2 className="text-secondary text-lg sm:text-xl font-Roboto font-medium">
-                    Bio
-                  </h2>
-                  <h3 className="text-neutral-400 text-xs sm:text-sm font-Roboto ">
-                    Tell us about yourself. This will be displayed on your
-                    profile.
-                  </h3>
-                  <textarea
-                    type="text"
-                    placeholder="Bio"
-                    value={updatedUserDetails.bio}
-                    maxLength={300}
-                    onChange={(e) =>
-                      setUpdatedUserDetails({
-                        ...updatedUserDetails,
-                        bio: e.target.value,
-                      })
-                    }
-                    className="w-full p-2 font-Noto mt-2 resize-none h-[200px] bg-background text-secondary rounded-md border border-neutral-400"
-                  />
-                </div>
-                <div className="flex-col mt-4 flex justify-start w-full items-start">
-                  <h2 className="text-secondary text-lg sm:text-xl font-Roboto font-medium">
-                    Skills
-                  </h2>
-                  <h3 className="text-neutral-400 text-xs sm:text-sm font-Roboto ">
-                    Add some skills to your profile. Make sure to separate each
-                    skill with a comma and a space. Minimum of three skills
-                    required.
-                  </h3>
-                  <input
-                    type="text"
-                    placeholder="Skills"
-                    value={updatedUserDetails.skills}
-                    maxLength={75}
-                    onChange={(e) =>
-                      setUpdatedUserDetails({
-                        ...updatedUserDetails,
-                        skills: e.target.value,
-                      })
-                    }
-                    className="w-full p-2 mt-2 bg-background text-secondary rounded-md border border-neutral-400"
-                  />
-                </div>
+          <div className="fixed inset-0 flex items-center justify-center z-50">
+            <div className="w-4/5 sm:w-[600px] max-h-[90vh] bg-background border-2 border-primary shadow-xl shadow-black rounded-3xl overflow-hidden">
+              <div className="flex flex-col h-full">
+                <h1 className="text-secondary text-center text-xl sm:text-2xl border-b pb-2 px-4 sm:mt-0 mt-2 border-neutral-700 font-Roboto font-bold">
+                  Edit Profile
+                </h1>
+                <div className="flex flex-col overflow-y-auto p-2 sm:p-8">
+                  <div className="flex-col mt-2 sm:mt-6 flex justify-start w-full items-start">
+                    <h2 className="text-secondary text-lg sm:text-xl font-Roboto font-medium">
+                      User Header Link
+                    </h2>
+                    <h3 className="text-neutral-400 text-xs sm:text-sm font-Roboto ">
+                      This link will be displayed on your profile header. Use it
+                      to show off a project, personal website, or your preferred
+                      social media.
+                    </h3>
+                    <input
+                      type="text"
+                      placeholder="User Link"
+                      value={updatedUserDetails.userLink}
+                      maxLength={100}
+                      onChange={(e) =>
+                        setUpdatedUserDetails({
+                          ...updatedUserDetails,
+                          userLink: e.target.value,
+                        })
+                      }
+                      className="w-full p-2 mt-2 bg-background text-secondary rounded-md border border-neutral-400"
+                    />
+                  </div>
+                  <div className="flex-col mt-4 flex justify-start w-full items-start">
+                    <h2 className="text-secondary text-lg sm:text-xl font-Roboto font-medium">
+                      Bio
+                    </h2>
+                    <h3 className="text-neutral-400 text-xs sm:text-sm font-Roboto ">
+                      Tell us about yourself. This will be displayed on your
+                      profile.
+                    </h3>
+                    <textarea
+                      type="text"
+                      placeholder="Bio"
+                      value={updatedUserDetails.bio}
+                      maxLength={300}
+                      onChange={(e) =>
+                        setUpdatedUserDetails({
+                          ...updatedUserDetails,
+                          bio: e.target.value,
+                        })
+                      }
+                      className="w-full p-2 font-Noto mt-2 resize-none h-[200px] bg-background text-secondary rounded-md border border-neutral-400"
+                    />
+                  </div>
+                  <div className="flex-col mt-4 flex justify-start w-full items-start">
+                    <h2 className="text-secondary text-lg sm:text-xl font-Roboto font-medium">
+                      Skills
+                    </h2>
+                    <h3 className="text-neutral-400 text-xs sm:text-sm font-Roboto ">
+                      Add some skills to your profile. Make sure to separate
+                      each skill with a comma and a space. Minimum of three
+                      skills required.
+                    </h3>
+                    <input
+                      type="text"
+                      placeholder="Skills"
+                      value={updatedUserDetails.skills}
+                      maxLength={75}
+                      onChange={(e) =>
+                        setUpdatedUserDetails({
+                          ...updatedUserDetails,
+                          skills: e.target.value,
+                        })
+                      }
+                      className="w-full p-2 mt-2 bg-background text-secondary rounded-md border border-neutral-400"
+                    />
+                  </div>
 
-                <div className="flex flex-row items-center justify-center mt-10 space-x-4">
-                  <button
-                    onClick={() => {
-                      handleProfileUpdate();
-                    }}
-                    className="bg-primary hover:brightness-110 hover:scale-105 text-background font-Roboto font-bold text-lg w-20 py-1 rounded-md"
-                  >
-                    Save
-                  </button>
-                  <button
-                    onClick={() => setEditProfile(false)}
-                    className="bg-red-600 hover:brightness-110 hover:scale-105 text-background font-Roboto font-bold text-lg py-1 w-20 rounded-md"
-                  >
-                    Cancel
-                  </button>
+                  <div className="flex flex-row items-center justify-center mt-10 space-x-4">
+                    <button
+                      onClick={() => {
+                        handleProfileUpdate();
+                      }}
+                      className="bg-primary hover:brightness-110 hover:scale-105 text-background font-Roboto font-bold text-lg w-20 py-1 rounded-md"
+                    >
+                      Save
+                    </button>
+                    <button
+                      onClick={() => setEditProfile(false)}
+                      className="bg-red-600 hover:brightness-110 hover:scale-105 text-background font-Roboto font-bold text-lg py-1 w-20 rounded-md"
+                    >
+                      Cancel
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>

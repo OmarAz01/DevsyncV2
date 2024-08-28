@@ -7,6 +7,7 @@ import ReceivedSyncs from "../components/feed/ReceivedSyncs";
 import { useCookies } from "react-cookie";
 import SyncModal from "../components/modals/SyncModal";
 import { Helmet } from "react-helmet";
+import { TroubleshootTwoTone } from "@mui/icons-material";
 
 const Feed = () => {
   const [cookie] = useCookies(["token"]);

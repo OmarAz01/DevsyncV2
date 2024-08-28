@@ -247,37 +247,41 @@ const ReceivedSyncs = ({ createAlert }) => {
       {syncResponseModal.open && syncResponseModal.status === "Accept" ? (
         <>
           <div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm z-40 pointer-events-none"></div>
-          <div className="fixed h-fit w-4/5 sm:w-[600px] top-1/2 left-1/2 transform -translate-x-1/2 rounded-3xl -translate-y-1/2 bg-background border-2 border-primary shadow-xl shadow-black px-2 pt-2 sm:px-8 sm:pt-8 z-50">
-            <div className="flex flex-col h-full">
-              <h1 className="text-secondary text-center text-xl sm:text-2xl border-b pb-2 px-4 sm:mt-0 mt-2 border-neutral-700 font-Roboto font-bold">
-                Accept the Sync Request
-              </h1>
-              <div className="flex-col flex justify-start w-full p-2 md:p-4 items-start">
-                <div className="flex flex-col items-start w-full">
-                  <textarea
-                    name="message"
-                    id="message"
-                    className="w-full border mt-2 resize-none border-neutral-400 rounded-md p-2 bg-neutral-900 text-secondary font-Roboto"
-                    placeholder="This is an optional one time response, you can use this to send a short message letting them know you accepted the sync and if you have a different preferred contact method."
-                    value={syncResponse}
-                    onChange={(e) => setSyncResponse(e.target.value)}
-                    rows={9}
-                    maxLength={250}
-                  ></textarea>
-                </div>
-                <div className="flex flex-row items-center justify-center my-4 space-x-4 w-full">
-                  <button
-                    onClick={() => acceptSync(syncResponseModal.syncId)}
-                    className="bg-green-500 hover:brightness-110 hover:scale-105 text-background font-Roboto font-bold text-lg py-1 w-20 rounded-md"
-                  >
-                    Accept
-                  </button>
-                  <button
-                    onClick={() => closeSyncResponseModal()}
-                    className="bg-red-600 hover:brightness-110 hover:scale-105 text-background font-Roboto font-bold text-lg py-1 w-20 rounded-md"
-                  >
-                    Cancel
-                  </button>
+          <div className="fixed inset-0 flex items-center justify-center z-50">
+            <div className="w-4/5 sm:w-[600px] max-h-[90vh] overflow-y-auto bg-background border-2 border-primary shadow-xl shadow-black rounded-3xl">
+              <div className="px-2 pt-2 sm:px-8 sm:pt-8">
+                <div className="flex flex-col">
+                  <h1 className="text-secondary text-center text-xl sm:text-2xl border-b pb-2 px-4 sm:mt-0 mt-2 border-neutral-700 font-Roboto font-bold">
+                    Accept the Sync Request
+                  </h1>
+                  <div className="flex-col flex justify-start w-full p-2 md:p-4 items-start">
+                    <div className="flex flex-col items-start w-full">
+                      <textarea
+                        name="message"
+                        id="message"
+                        className="w-full border mt-2 resize-none border-neutral-400 rounded-md p-2 bg-neutral-900 text-secondary font-Roboto"
+                        placeholder="This is an optional one time response, you can use this to send a short message letting them know you accepted the sync and if you have a different preferred contact method."
+                        value={syncResponse}
+                        onChange={(e) => setSyncResponse(e.target.value)}
+                        rows={9}
+                        maxLength={250}
+                      ></textarea>
+                    </div>
+                    <div className="flex flex-row items-center justify-center my-4 space-x-4 w-full">
+                      <button
+                        onClick={() => acceptSync(syncResponseModal.syncId)}
+                        className="bg-green-500 hover:brightness-110 hover:scale-105 text-background font-Roboto font-bold text-lg py-1 w-20 rounded-md"
+                      >
+                        Accept
+                      </button>
+                      <button
+                        onClick={() => closeSyncResponseModal()}
+                        className="bg-red-600 hover:brightness-110 hover:scale-105 text-background font-Roboto font-bold text-lg py-1 w-20 rounded-md"
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -286,24 +290,26 @@ const ReceivedSyncs = ({ createAlert }) => {
       ) : syncResponseModal.open && syncResponseModal.status === "Reject" ? (
         <>
           <div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm z-40 pointer-events-none"></div>
-          <div className="fixed h-fit w-4/5 sm:w-[600px] top-1/2 left-1/2 transform -translate-x-1/2 rounded-3xl -translate-y-1/2 bg-background border-2 border-primary shadow-xl shadow-black px-2 pt-2 sm:px-8 sm:pt-8 z-50">
-            <div className="flex flex-col h-full">
-              <h1 className="text-secondary text-center text-xl sm:text-2xl border-b pb-2 px-4 sm:mt-0 mt-2 border-neutral-700 font-Roboto font-bold">
-                Are you sure you want to reject the Sync Request?
-              </h1>
-              <div className="flex flex-row items-center justify-center my-4 space-x-4 w-full">
-                <button
-                  onClick={() => rejectSync(syncResponseModal.syncId)}
-                  className="bg-green-500 hover:brightness-110 hover:scale-105 text-background font-Roboto font-bold text-lg py-1 w-20 rounded-md"
-                >
-                  Yes
-                </button>
-                <button
-                  onClick={() => closeSyncResponseModal()}
-                  className="bg-red-600 hover:brightness-110 hover:scale-105 text-background font-Roboto font-bold text-lg py-1 w-20 rounded-md"
-                >
-                  Cancel
-                </button>
+          <div className="fixed inset-0 flex items-center justify-center z-50">
+            <div className="w-4/5 sm:w-[600px] max-h-[90vh] flex flex-col bg-background border-2 border-primary shadow-xl shadow-black rounded-3xl overflow-hidden">
+              <div className="px-4 py-4 sm:px-8 sm:py-6 flex-grow overflow-y-auto">
+                <h1 className="text-secondary text-center text-xl sm:text-2xl border-b pb-2 sm:mt-0 mt-2 border-neutral-700 font-Roboto font-bold">
+                  Are you sure you want to reject the Sync Request?
+                </h1>
+                <div className="flex flex-row items-center justify-center mt-6 space-x-4">
+                  <button
+                    onClick={() => rejectSync(syncResponseModal.syncId)}
+                    className="bg-green-500 hover:brightness-110 hover:scale-105 text-background font-Roboto font-bold text-lg py-2 px-6 rounded-md"
+                  >
+                    Yes
+                  </button>
+                  <button
+                    onClick={() => closeSyncResponseModal()}
+                    className="bg-red-600 hover:brightness-110 hover:scale-105 text-background font-Roboto font-bold text-lg py-2 px-6 rounded-md"
+                  >
+                    Cancel
+                  </button>
+                </div>
               </div>
             </div>
           </div>
