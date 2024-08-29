@@ -138,7 +138,7 @@ const CreatePost = ({ createAlert }) => {
             type="text"
             name="skills"
             maxLength={30}
-            placeholder="Highlight 3 Skills seperated by a comma (e.g. MySQL, React, Java)"
+            placeholder="Highlight up to 3 Skills seperated by a comma (e.g. MySQL, React, Java)"
             className="text-sm border text-secondary rounded-md font-Noto border-neutral-400 bg-neutral-800 p-2"
           />
           <h4 className="text-xs lg:text-sm text-right w-full pr-1 italic font-Roboto text-neutral-500 mb-3">

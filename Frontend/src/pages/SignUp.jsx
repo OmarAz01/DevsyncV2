@@ -32,7 +32,6 @@ export default function SignUp() {
   const BASE_URL = import.meta.env.VITE_BASE_URL;
   const [cookie, setCookie, removeCookie] = useCookies(["token"]);
   const [verify, setVerify] = useState({ verify: false, email: "" });
-  const [email, setEmail] = useState("");
   const [clickCount1, setClickCount1] = useState(0);
   const [clickCount2, setClickCount2] = useState(0);
   const [lastResetTime1, setLastResetTime1] = useState(Date.now());
@@ -149,7 +148,7 @@ export default function SignUp() {
     }
     const data = new FormData(event.currentTarget);
     const verification = {
-      email: email,
+      email: verify.email,
       code: data.get("code"),
     };
     axios
