@@ -17,9 +17,13 @@ const DisplayPosts = ({ rawPosts, turnOnSyncModal }) => {
         shorterDescription = post.description.substring(0, 300) + "...";
         showingAll = false;
       }
+      if (post.skills === "") {
+        post.skills = [];
+      } else {
+        post.skills = post.skills.split(",");
+      }
       return {
         ...post,
-        skills: post.skills.split(","),
         createdAt: formatDistanceToNow(parseISO(formattedTime), {
           addSuffix: true,
         }),
