@@ -1,3 +1,5 @@
-# devsync  
-A [website](https://www.devsync.org/) to connect and work with other developers  
-Developed using React, Spring, MySQL, Docker, and AWS  
+# devsync
+
+A [website](https://www.devsync.org/) to collaborate with developers on projects
+
+Developed using React, SpringBoot, MySQL, Docker, and AWS

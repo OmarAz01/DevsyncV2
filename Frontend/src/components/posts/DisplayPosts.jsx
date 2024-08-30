@@ -69,7 +69,7 @@ const DisplayPosts = ({ rawPosts, turnOnSyncModal }) => {
               </button>
             )}
           </div>
-          <div className="text-xl text-secondary font-Roboto font-bold break-words mb-2">
+          <div className="text-xl text-secondary font-Roboto font-bold break-words mb-1">
             {post.title}
           </div>
 
