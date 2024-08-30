@@ -2,58 +2,37 @@ import React, { useState, useEffect } from "react";
 import { formatDistanceToNow, parseISO } from "date-fns";
 
 const DisplayPosts = ({ rawPosts, turnOnSyncModal }) => {
-  const [posts, setPosts] = useState([
-    {
-      id: 2,
-      title: "Second Post",
-      description:
-        "Just testing out the site, looks cool. Anyone want to sync with me?",
-      skills: ["Test", "Sync", "React"],
-      createdAt: "2024-08-29T18:29:14.919270",
-      username: "arealuser",
-      showingAll: true,
-    },
-    {
-      id: 1,
-      title: "First Post",
-      description:
-        "Wow I'm first, this is cool. Who wants to build the next AI app with me? Sync with me lets talk...",
-      skills: [],
-      createdAt: "2024-08-27T19:09:25.982177",
-      username: "devsync",
-      showingAll: true,
-    },
-  ]);
+  const [posts, setPosts] = useState([]);
 
-  // useEffect(() => {
-  //   formatPosts(rawPosts);
-  // }, [rawPosts]);
+  useEffect(() => {
+    formatPosts(rawPosts);
+  }, [rawPosts]);
 
-  // const formatPosts = (rawPosts) => {
-  //   const formattedPosts = rawPosts.map((post) => {
-  //     let shorterDescription = post.description;
-  //     let showingAll = true;
-  //     const formattedTime = post.createdAt + "Z";
-  //     if (post.description.length > 200) {
-  //       shorterDescription = post.description.substring(0, 300) + "...";
-  //       showingAll = false;
-  //     }
-  //     if (post.skills === "") {
-  //       post.skills = [];
-  //     } else {
-  //       post.skills = post.skills.split(",");
-  //     }
-  //     return {
-  //       ...post,
-  //       createdAt: formatDistanceToNow(parseISO(formattedTime), {
-  //         addSuffix: true,
-  //       }),
-  //       shorterDescription,
-  //       showingAll,
-  //     };
-  //   });
-  //   setPosts(formattedPosts);
-  // };
+  const formatPosts = (rawPosts) => {
+    const formattedPosts = rawPosts.map((post) => {
+      let shorterDescription = post.description;
+      let showingAll = true;
+      const formattedTime = post.createdAt + "Z";
+      if (post.description.length > 200) {
+        shorterDescription = post.description.substring(0, 300) + "...";
+        showingAll = false;
+      }
+      if (post.skills === "") {
+        post.skills = [];
+      } else {
+        post.skills = post.skills.split(",");
+      }
+      return {
+        ...post,
+        createdAt: formatDistanceToNow(parseISO(formattedTime), {
+          addSuffix: true,
+        }),
+        shorterDescription,
+        showingAll,
+      };
+    });
+    setPosts(formattedPosts);
+  };
 
   const handleShowMore = (postId) => {
     setPosts((prevPosts) =>
