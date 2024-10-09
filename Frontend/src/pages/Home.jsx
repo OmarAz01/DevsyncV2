@@ -6,7 +6,8 @@ const Home = () => {
     <div className="flex justify-center items-center flex-col w-full">
       <div className="min-h-screen bg-background text-secondary font-Roboto max-w-screen-2xl">
         {/* Hero Section */}
-        <section className="flex flex-col justify-center items-center text-center py-20">
+        <section className="relative flex flex-col justify-center items-center text-center py-20 max-h-[600px] h-[100vh] sm:max-h-[700px] z-10">
+          <div className="absolute inset-0 bg-primary bg-[size:3px_3px] opacity-15 blur-[300px] sm:blur-[500px] z-[-1]" />
           <h1 className="text-5xl font-bold text-primary px-1">
             Sync with Developers. Build Amazing Projects.
           </h1>
