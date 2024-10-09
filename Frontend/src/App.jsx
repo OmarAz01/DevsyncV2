@@ -7,6 +7,7 @@ import {
   Profile,
   PrivacyPolicy,
   TOS,
+  Home,
 } from "./pages/index";
 import { useCookies } from "react-cookie";
 import axios from "axios";
@@ -30,9 +31,17 @@ const App = () => {
         })
         .then((response) => {
           if (response.status === 200) {
-            setCookie("token", response.data.jwt, { path: "/" });
+            const currentDate = new Date();
+            const expirationDate = new Date(
+              currentDate.getTime() + 3 * 24 * 60 * 60 * 1000
+            );
+            setCookie("token", response.data.jwt, {
+              path: "/",
+              expires: expirationDate,
+            });
             setCookie("user", response.data.id, {
               path: "/",
+              expires: expirationDate,
             });
             setLoggedIn(true);
             console.log("User is logged in");
@@ -74,6 +83,12 @@ const App = () => {
             devsync{" "}
           </h4>
         </Link>
+        <Link to="/feed">
+          <h4 className="p-4 text-primary hover:cursor-pointer hover:font-bold font-Roboto text-lg sm:text-xl">
+            {" "}
+            Feed
+          </h4>
+        </Link>
         {loggedIn ? (
           <>
             <Link to={`/profile/myprofile`}>
@@ -103,7 +118,8 @@ const App = () => {
       </header>
       <main className="min-h-[calc(100vh-200px)]">
         <Routes>
-          <Route path="/" element={<Feed />} />
+          <Route path="/" element={<Home />} />
+          <Route path="/feed" element={<Feed />} />
           <Route path="/signup" element={<SignUp />} />
           <Route path="/signin" element={<SignIn />} />
           <Route path="/profile/:username" element={<Profile />} />

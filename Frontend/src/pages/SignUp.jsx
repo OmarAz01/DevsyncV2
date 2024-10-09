@@ -154,10 +154,23 @@ export default function SignUp() {
     axios
       .post(BASE_URL + "/api/auth/verify", verification)
       .then((response) => {
+        const currentDate = new Date();
+        const expirationDate = new Date(
+          currentDate.getTime() + 3 * 24 * 60 * 60 * 1000
+        );
         toast.success("User verified successfully");
-        setCookie("token", response.data.jwt, { path: "/" });
-        setCookie("user", response.data.id, { path: "/" });
-        setCookie("username", response.data.username, { path: "/" });
+        setCookie("token", response.data.jwt, {
+          path: "/",
+          expires: expirationDate,
+        });
+        setCookie("user", response.data.id, {
+          path: "/",
+          expires: expirationDate,
+        });
+        setCookie("username", response.data.username, {
+          path: "/",
+          expires: expirationDate,
+        });
         window.location.href = "/profile/myprofile";
       })
       .catch((error) => {

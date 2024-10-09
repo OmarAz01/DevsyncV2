@@ -75,11 +75,24 @@ export default function SignIn() {
         password: password,
       })
       .then((response) => {
+        const currentDate = new Date();
+        const expirationDate = new Date(
+          currentDate.getTime() + 3 * 24 * 60 * 60 * 1000
+        );
         toast.success("User logged in successfully");
-        setCookie("token", response.data.jwt, { path: "/" });
-        setCookie("user", response.data.id, { path: "/" });
-        setCookie("username", response.data.username, { path: "/" });
-        window.location.href = "/";
+        setCookie("token", response.data.jwt, {
+          path: "/",
+          expires: expirationDate,
+        });
+        setCookie("user", response.data.id, {
+          path: "/",
+          expires: expirationDate,
+        });
+        setCookie("username", response.data.username, {
+          path: "/",
+          expires: expirationDate,
+        });
+        window.location.href = "/feed";
       })
       .catch((error) => {
         if (error.response && error.response.status === 403) {
@@ -115,11 +128,24 @@ export default function SignIn() {
         code: data.get("code"),
       })
       .then((response) => {
+        const currentDate = new Date();
+        const expirationDate = new Date(
+          currentDate.getTime() + 3 * 24 * 60 * 60 * 1000
+        );
         toast.success("Email verified successfully");
-        setCookie("token", response.data.jwt, { path: "/" });
-        setCookie("user", response.data.id, { path: "/" });
-        setCookie("username", response.data.username, { path: "/" });
-        window.location.href = "/";
+        setCookie("token", response.data.jwt, {
+          path: "/",
+          expires: expirationDate,
+        });
+        setCookie("user", response.data.id, {
+          path: "/",
+          expires: expirationDate,
+        });
+        setCookie("username", response.data.username, {
+          path: "/",
+          expires: expirationDate,
+        });
+        window.location.href = "/feed";
         setVerify(false);
       })
       .catch((error) => {
